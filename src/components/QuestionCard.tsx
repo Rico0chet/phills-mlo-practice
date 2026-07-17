@@ -12,8 +12,10 @@ type Props = {
 };
 
 export function QuestionCard({ question, index, selected, revealed, onSelect }: Props) {
-  const [localReveal, setLocalReveal] = useState(false);
-  const isRevealed = revealed || localReveal;
+  // As soon as the learner picks an answer, show red/green feedback.
+  const hasSelection = selected !== undefined;
+  const isRevealed = revealed || hasSelection;
+  const answeredCorrectly = selected === question.answer;
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
@@ -25,6 +27,9 @@ export function QuestionCard({ question, index, selected, revealed, onSelect }: 
         {question.choices.map((c) => {
           const isSelected = selected === c.key;
           const isCorrect = question.answer === c.key;
+          // Highlight the correct choice in green once an answer has been picked
+          // (or the whole page has been submitted). Highlight the picked choice
+          // in red only when it's wrong.
           const showCorrect = isRevealed && isCorrect;
           const showWrong = isRevealed && isSelected && !isCorrect;
           return (
@@ -35,9 +40,8 @@ export function QuestionCard({ question, index, selected, revealed, onSelect }: 
               className={cn(
                 "flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left text-sm transition-colors",
                 "border-border bg-background hover:bg-accent hover:text-accent-foreground",
-                isSelected && !isRevealed && "border-primary bg-accent",
-                showCorrect && "border-emerald-500 bg-emerald-50 text-emerald-900",
-                showWrong && "border-red-500 bg-red-50 text-red-900",
+                showCorrect && "border-emerald-500 bg-emerald-50 text-emerald-900 hover:bg-emerald-50 hover:text-emerald-900",
+                showWrong && "border-red-500 bg-red-50 text-red-900 hover:bg-red-50 hover:text-red-900",
                 isRevealed && "cursor-default",
               )}
             >
@@ -49,22 +53,19 @@ export function QuestionCard({ question, index, selected, revealed, onSelect }: 
           );
         })}
       </div>
-      {!revealed && (
-        <div className="mt-3 flex justify-end">
-          <button
-            onClick={() => setLocalReveal((v) => !v)}
-            className="text-xs font-medium text-muted-foreground hover:text-foreground"
-          >
-            {localReveal ? "Hide answer" : "Show answer"}
-          </button>
-        </div>
-      )}
-      {isRevealed && question.explanation && (
+      {isRevealed && (
         <p className="mt-4 rounded-md bg-muted p-3 text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">Answer {question.answer}. </span>
-          {question.explanation}
+          <span className={cn("font-semibold", answeredCorrectly ? "text-emerald-700" : "text-red-700")}>
+            {hasSelection
+              ? answeredCorrectly
+                ? "Correct."
+                : `Incorrect. Correct answer: ${question.answer}.`
+              : `Answer ${question.answer}.`}
+          </span>
+          {question.explanation ? ` ${question.explanation}` : null}
         </p>
       )}
     </div>
   );
 }
+
