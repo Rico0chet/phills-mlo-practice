@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { getQuestions, getChapter, type Question } from "@/lib/exam-data";
+import { getQuestions, getChapter, buildAttempt, QUESTIONS_PER_ATTEMPT, type Question } from "@/lib/exam-data";
 import { QuestionCard } from "@/components/QuestionCard";
 import { ArrowLeft } from "lucide-react";
 
