@@ -280,3 +280,39 @@ export function getQuestions(chapter: string, page: string): Question[] | null {
 export function getChapter(chapter: string): ChapterInfo | undefined {
   return chapters.find((c) => c.number === Number(chapter));
 }
+
+export const QUESTIONS_PER_ATTEMPT = 20;
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const LETTERS: ("A" | "B" | "C" | "D")[] = ["A", "B", "C", "D"];
+
+/**
+ * Returns a randomized attempt: up to `count` questions sampled from the pool,
+ * with each question's answer choices shuffled and re-lettered A-D. The
+ * `answer` field is updated to match the choice's new letter so grading and
+ * feedback continue to work unchanged.
+ */
+export function buildAttempt(
+  pool: Question[],
+  count: number = QUESTIONS_PER_ATTEMPT,
+): Question[] {
+  const picked = shuffle(pool).slice(0, Math.min(count, pool.length));
+  return picked.map((q) => {
+    const shuffledChoices = shuffle(q.choices);
+    const newChoices = shuffledChoices.map((c, i) => ({ key: LETTERS[i], text: c.text }));
+    const correctIdx = shuffledChoices.findIndex((c) => c.key === q.answer);
+    return {
+      ...q,
+      choices: newChoices,
+      answer: LETTERS[correctIdx],
+    };
+  });
+}
