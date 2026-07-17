@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { getQuestions, getChapter, type Question } from "@/lib/exam-data";
+import { getQuestions, getChapter, buildAttempt, QUESTIONS_PER_ATTEMPT, type Question } from "@/lib/exam-data";
 import { QuestionCard } from "@/components/QuestionCard";
 import { ArrowLeft } from "lucide-react";
 
@@ -40,12 +40,20 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
 
 function ChapterPage() {
   const { chapter: chapterParam, page } = Route.useParams();
-  const { questions, chapter } = Route.useLoaderData() as {
+  const { questions: pool, chapter } = Route.useLoaderData() as {
     questions: Question[] | null;
     chapter: { number: number; title: string; pages: number };
   };
+  const [attemptSeed, setAttemptSeed] = useState(0);
   const [answers, setAnswers] = useState<Record<number, "A" | "B" | "C" | "D">>({});
   const [submitted, setSubmitted] = useState(false);
+
+  // Build a fresh randomized attempt each time the page loads or the learner retries.
+  const questions = useMemo(() => {
+    if (!pool) return null;
+    return buildAttempt(pool, QUESTIONS_PER_ATTEMPT);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pool, attemptSeed]);
 
   const score = useMemo(() => {
     if (!submitted || !questions) return null;
@@ -76,7 +84,9 @@ function ChapterPage() {
           </h1>
           {questions ? (
             <p className="mt-2 text-muted-foreground">
-              {questions.length} multiple-choice questions. Answer each, then submit to see your score.
+              {questions.length} randomized questions
+              {pool && pool.length > questions.length ? ` (from a pool of ${pool.length})` : ""}
+              . Questions and answer choices are shuffled each attempt.
             </p>
           ) : (
             <p className="mt-2 text-muted-foreground">
@@ -116,6 +126,7 @@ function ChapterPage() {
                     onClick={() => {
                       setAnswers({});
                       setSubmitted(false);
+                      setAttemptSeed((s) => s + 1);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     className="mt-2 rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
