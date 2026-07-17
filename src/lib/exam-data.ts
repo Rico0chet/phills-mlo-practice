@@ -249,7 +249,34 @@ export const chapter1Page1: Question[] = [
   },
 ];
 
-export const chapters = Array.from({ length: 10 }, (_, i) => ({
-  number: i + 1,
-  title: `Chapter ${i + 1}`,
-}));
+export type ChapterInfo = {
+  number: number;
+  title: string;
+  pages: number;
+};
+
+export const chapters: ChapterInfo[] = [
+  { number: 1, title: "Loan Types and Related Products", pages: 6 },
+  { number: 2, title: "Regulatory Framework", pages: 7 },
+  { number: 3, title: "Loan Processing", pages: 5 },
+  { number: 4, title: "Mortgage Mathematics", pages: 1 },
+  { number: 5, title: "Ethical Consideration and Compliance", pages: 6 },
+  { number: 6, title: "Closing Process", pages: 5 },
+  { number: 7, title: "Market Trends and Economic Factors", pages: 3 },
+  { number: 8, title: "Customer Service and Communication Skills", pages: 3 },
+  { number: 9, title: "Technology in Mortgage Lending", pages: 1 },
+  { number: 10, title: "Practice Questions and Answers", pages: 8 },
+];
+
+// Registry of loaded question sets. Key format: "chapter-page".
+export const questionSets: Record<string, Question[]> = {
+  "1-1": chapter1Page1,
+};
+
+export function getQuestions(chapter: string, page: string): Question[] | null {
+  return questionSets[`${chapter}-${page}`] ?? null;
+}
+
+export function getChapter(chapter: string): ChapterInfo | undefined {
+  return chapters.find((c) => c.number === Number(chapter));
+}
