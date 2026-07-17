@@ -40,12 +40,20 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
 
 function ChapterPage() {
   const { chapter: chapterParam, page } = Route.useParams();
-  const { questions, chapter } = Route.useLoaderData() as {
+  const { questions: pool, chapter } = Route.useLoaderData() as {
     questions: Question[] | null;
     chapter: { number: number; title: string; pages: number };
   };
+  const [attemptSeed, setAttemptSeed] = useState(0);
   const [answers, setAnswers] = useState<Record<number, "A" | "B" | "C" | "D">>({});
   const [submitted, setSubmitted] = useState(false);
+
+  // Build a fresh randomized attempt each time the page loads or the learner retries.
+  const questions = useMemo(() => {
+    if (!pool) return null;
+    return buildAttempt(pool, QUESTIONS_PER_ATTEMPT);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pool, attemptSeed]);
 
   const score = useMemo(() => {
     if (!submitted || !questions) return null;
