@@ -84,8 +84,18 @@ function ChapterPage() {
           </h1>
           {questions ? (
             <p className="mt-2 text-muted-foreground">
-              {questions.length} multiple-choice questions. Answer each, then submit to see your score.
+              {questions.length} randomized questions
+              {pool && pool.length > questions.length ? ` (from a pool of ${pool.length})` : ""}
+              . Questions and answer choices are shuffled each attempt.
             </p>
+          ) : (
+            <p className="mt-2 text-muted-foreground">
+              Questions for this page haven't been added yet.
+            </p>
+          )}
+        </div>
+      </header>
+      {/* placeholder to keep line balance */}
           ) : (
             <p className="mt-2 text-muted-foreground">
               Questions for this page haven't been added yet.
