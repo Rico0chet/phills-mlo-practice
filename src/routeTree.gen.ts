@@ -10,33 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChapterChapterPagePageRouteImport } from './routes/chapter.$chapter.page.$page'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChapterChapterPagePageRoute = ChapterChapterPagePageRouteImport.update({
+  id: '/chapter/$chapter/page/$page',
+  path: '/chapter/$chapter/page/$page',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/chapter/$chapter/page/$page'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/chapter/$chapter/page/$page'
+  id: '__root__' | '/' | '/chapter/$chapter/page/$page'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChapterChapterPagePageRoute: typeof ChapterChapterPagePageRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +58,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chapter/$chapter/page/$page': {
+      id: '/chapter/$chapter/page/$page'
+      path: '/chapter/$chapter/page/$page'
+      fullPath: '/chapter/$chapter/page/$page'
+      preLoaderRoute: typeof ChapterChapterPagePageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChapterChapterPagePageRoute: ChapterChapterPagePageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
