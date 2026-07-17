@@ -95,14 +95,6 @@ function ChapterPage() {
           )}
         </div>
       </header>
-      {/* placeholder to keep line balance */}
-          ) : (
-            <p className="mt-2 text-muted-foreground">
-              Questions for this page haven't been added yet.
-            </p>
-          )}
-        </div>
-      </header>
 
       <main className="mx-auto max-w-3xl px-6 py-8">
         {questions ? (
