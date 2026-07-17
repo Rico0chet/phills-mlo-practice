@@ -42,7 +42,7 @@ function getQuestions(chapter: string, page: string): Question[] | null {
 
 function ChapterPage() {
   const { chapter, page } = Route.useParams();
-  const { questions } = Route.useLoaderData();
+  const { questions } = Route.useLoaderData() as { questions: Question[] };
   const [answers, setAnswers] = useState<Record<number, "A" | "B" | "C" | "D">>({});
   const [submitted, setSubmitted] = useState(false);
 
