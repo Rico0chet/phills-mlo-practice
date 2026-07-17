@@ -18,53 +18,42 @@ function Index() {
           </h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
             Prepare for your Mortgage Loan Originator licensing exam with chapter-by-chapter
-            practice questions. Select a chapter below to begin.
+            practice questions. Select a chapter and page below to begin.
           </p>
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-6 py-10">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {chapters.map((ch) => {
-            const available = ch.number === 1;
-            const inner = (
-              <div
-                className={
-                  "group h-full rounded-xl border border-border bg-card p-6 shadow-sm transition-all " +
-                  (available
-                    ? "hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
-                    : "opacity-60")
-                }
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Chapter {ch.number}
-                  </span>
-                  {!available && (
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                      Coming soon
-                    </span>
-                  )}
-                </div>
-                <h2 className="mt-2 text-xl font-semibold text-card-foreground">
-                  {ch.title}
-                </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {available ? "Page 1 · 20 questions" : "Not yet available"}
-                </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {chapters.map((ch) => (
+            <div
+              key={ch.number}
+              className="rounded-xl border border-border bg-card p-6 shadow-sm"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Chapter {ch.number}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {ch.pages} {ch.pages === 1 ? "page" : "pages"}
+                </span>
               </div>
-            );
-            return available ? (
-              <Link
-                key={ch.number}
-                to="/chapter/$chapter/page/$page"
-                params={{ chapter: String(ch.number), page: "1" }}
-              >
-                {inner}
-              </Link>
-            ) : (
-              <div key={ch.number}>{inner}</div>
-            );
-          })}
+              <h2 className="mt-2 text-xl font-semibold text-card-foreground">
+                {ch.title}
+              </h2>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {Array.from({ length: ch.pages }, (_, i) => i + 1).map((p) => (
+                  <Link
+                    key={p}
+                    to="/chapter/$chapter/page/$page"
+                    params={{ chapter: String(ch.number), page: String(p) }}
+                    className="rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground"
+                  >
+                    Page {p}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </main>
     </div>
