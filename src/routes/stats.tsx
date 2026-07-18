@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, TrendingUp, AlertTriangle, Circle } from "lucide-react";
+import { ArrowLeft, TrendingUp, AlertTriangle, Circle, Cloud, CloudOff } from "lucide-react";
 import { loadStats, summarize, clearStats, type ChapterSummary } from "@/lib/stats";
+import { loadCloudStats } from "@/lib/stats.functions";
+import { useSession } from "@/hooks/useSession";
+
 
 export const Route = createFileRoute("/stats")({
   head: () => ({
