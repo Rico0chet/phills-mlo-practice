@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getQuestions, getChapter, buildAttempt, QUESTIONS_PER_ATTEMPT, type Question } from "@/lib/exam-data";
 import { QuestionCard } from "@/components/QuestionCard";
+import { recordAttempt } from "@/lib/stats";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/chapter/$chapter/page/$page")({
