@@ -63,6 +63,15 @@ function ChapterPage() {
     return correct;
   }, [submitted, answers, questions]);
 
+  const recordedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!submitted || !questions || score === null) return;
+    const key = `${chapterParam}-${page}-${attemptSeed}`;
+    if (recordedRef.current === key) return;
+    recordedRef.current = key;
+    recordAttempt(chapterParam, score, questions.length);
+  }, [submitted, score, questions, chapterParam, page, attemptSeed]);
+
   const pageNum = Number(page);
   const prevPage = pageNum > 1 ? String(pageNum - 1) : null;
   const nextPage = pageNum < chapter.pages ? String(pageNum + 1) : null;

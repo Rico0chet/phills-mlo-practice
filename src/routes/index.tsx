@@ -20,6 +20,12 @@ function Index() {
             Prepare for your Mortgage Loan Originator licensing exam with chapter-by-chapter
             practice questions. Select a chapter and page below to begin.
           </p>
+          <Link
+            to="/stats"
+            className="mt-5 inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:bg-accent"
+          >
+            View your stats →
+          </Link>
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-6 py-10">
