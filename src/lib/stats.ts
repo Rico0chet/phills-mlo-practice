@@ -1,6 +1,9 @@
 import { chapters } from "./exam-data";
+import { supabase } from "@/integrations/supabase/client";
+import { recordCloudAttempt, clearCloudStats } from "./stats.functions";
 
 const KEY = "mlo-stats-v1";
+
 
 export type ChapterStat = {
   correct: number;
