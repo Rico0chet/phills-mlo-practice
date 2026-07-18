@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { chapters } from "@/lib/exam-data";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AccountMenu } from "@/components/AccountMenu";
+
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -20,8 +22,12 @@ function Index() {
                 Practice Exam
               </h1>
             </div>
-            <ThemeToggle />
+            <div className="flex flex-col items-end gap-2">
+              <AccountMenu />
+              <ThemeToggle />
+            </div>
           </div>
+
           <p className="mt-3 max-w-2xl text-muted-foreground">
             Prepare for your Mortgage Loan Originator licensing exam with chapter-by-chapter
             practice questions. Select a chapter and page below to begin.

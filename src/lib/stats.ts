@@ -1,6 +1,9 @@
 import { chapters } from "./exam-data";
+import { supabase } from "@/integrations/supabase/client";
+import { recordCloudAttempt, clearCloudStats } from "./stats.functions";
 
 const KEY = "mlo-stats-v1";
+
 
 export type ChapterStat = {
   correct: number;
@@ -44,12 +47,32 @@ export function recordAttempt(chapter: string | number, correct: number, total: 
     attempts: cur.attempts + 1,
   };
   saveStats(s);
+  // Fire-and-forget cloud sync when signed in
+  void syncAttemptToCloud(String(chapter), correct, total);
+}
+
+async function syncAttemptToCloud(chapter: string, correct: number, total: number) {
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) return;
+    await recordCloudAttempt({ data: { chapter, correct, total } });
+  } catch (e) {
+    console.warn("Cloud stats sync failed", e);
+  }
 }
 
 export function clearStats() {
-  if (!isBrowser()) return;
-  window.localStorage.removeItem(KEY);
+  if (isBrowser()) window.localStorage.removeItem(KEY);
+  void (async () => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) await clearCloudStats();
+    } catch (e) {
+      console.warn("Cloud stats clear failed", e);
+    }
+  })();
 }
+
 
 export type ChapterSummary = {
   number: number;
