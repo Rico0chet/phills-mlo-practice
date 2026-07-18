@@ -22,11 +22,34 @@ const WEAK = 0.6;
 function StatsPage() {
   const [summary, setSummary] = useState<ChapterSummary[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const { user, loading: authLoading } = useSession();
 
   useEffect(() => {
-    setSummary(summarize(loadStats()));
-    setLoaded(true);
-  }, []);
+    if (authLoading) return;
+    let cancelled = false;
+    async function run() {
+      if (user) {
+        try {
+          const cloud = await loadCloudStats();
+          if (!cancelled) {
+            setSummary(summarize(cloud));
+            setLoaded(true);
+            return;
+          }
+        } catch (e) {
+          console.warn("Failed to load cloud stats, falling back to local", e);
+        }
+      }
+      if (!cancelled) {
+        setSummary(summarize(loadStats()));
+        setLoaded(true);
+      }
+    }
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, authLoading]);
 
   const answered = summary.filter((s) => s.total > 0);
   const strong = answered.filter((s) => (s.accuracy ?? 0) >= STRONG);
@@ -46,9 +69,23 @@ function StatsPage() {
             <ArrowLeft className="h-4 w-4" /> All chapters
           </Link>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">Your Stats</h1>
-          <p className="mt-2 text-muted-foreground">
-            Based on the practice attempts you've submitted on this device.
-          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-muted-foreground">
+            {user ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                <Cloud className="h-3.5 w-3.5" /> Synced to your account
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+                <CloudOff className="h-3.5 w-3.5" /> Saved on this device only
+              </span>
+            )}
+            {!user && (
+              <Link to="/auth" className="text-sm text-primary hover:underline">
+                Sign in to sync across devices
+              </Link>
+            )}
+          </div>
+
           {loaded && overall !== null && (
             <div className="mt-6 flex flex-wrap items-baseline gap-6">
               <div>
