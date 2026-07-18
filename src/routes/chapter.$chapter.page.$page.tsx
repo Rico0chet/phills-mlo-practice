@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getQuestions, getChapter, buildAttempt, QUESTIONS_PER_ATTEMPT, type Question } from "@/lib/exam-data";
 import { QuestionCard } from "@/components/QuestionCard";
+import { recordAttempt } from "@/lib/stats";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/chapter/$chapter/page/$page")({
@@ -61,6 +62,15 @@ function ChapterPage() {
     for (const q of questions) if (answers[q.id] === q.answer) correct++;
     return correct;
   }, [submitted, answers, questions]);
+
+  const recordedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!submitted || !questions || score === null) return;
+    const key = `${chapterParam}-${page}-${attemptSeed}`;
+    if (recordedRef.current === key) return;
+    recordedRef.current = key;
+    recordAttempt(chapterParam, score, questions.length);
+  }, [submitted, score, questions, chapterParam, page, attemptSeed]);
 
   const pageNum = Number(page);
   const prevPage = pageNum > 1 ? String(pageNum - 1) : null;

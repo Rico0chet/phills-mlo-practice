@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatsRouteImport } from './routes/stats'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChapterChapterPagePageRouteImport } from './routes/chapter.$chapter.page.$page'
 
+const StatsRoute = StatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -25,32 +31,43 @@ const ChapterChapterPagePageRoute = ChapterChapterPagePageRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/stats': typeof StatsRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/stats': typeof StatsRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/stats': typeof StatsRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chapter/$chapter/page/$page'
+  fullPaths: '/' | '/stats' | '/chapter/$chapter/page/$page'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chapter/$chapter/page/$page'
-  id: '__root__' | '/' | '/chapter/$chapter/page/$page'
+  to: '/' | '/stats' | '/chapter/$chapter/page/$page'
+  id: '__root__' | '/' | '/stats' | '/chapter/$chapter/page/$page'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  StatsRoute: typeof StatsRoute
   ChapterChapterPagePageRoute: typeof ChapterChapterPagePageRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stats': {
+      id: '/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof StatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  StatsRoute: StatsRoute,
   ChapterChapterPagePageRoute: ChapterChapterPagePageRoute,
 }
 export const routeTree = rootRouteImport
