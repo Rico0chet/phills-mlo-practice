@@ -11,12 +11,17 @@ function Index() {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="mx-auto max-w-5xl px-6 py-10">
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-            MLO Licensing
-          </p>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight text-foreground">
-            Practice Exam
-          </h1>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+                MLO Licensing
+              </p>
+              <h1 className="mt-2 text-4xl font-bold tracking-tight text-foreground">
+                Practice Exam
+              </h1>
+            </div>
+            <ThemeToggle />
+          </div>
           <p className="mt-3 max-w-2xl text-muted-foreground">
             Prepare for your Mortgage Loan Originator licensing exam with chapter-by-chapter
             practice questions. Select a chapter and page below to begin.
