@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { StatsState } from "./stats";
+
+type StatsState = Record<string, { correct: number; total: number; attempts: number }>;
+
 
 export const loadCloudStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
