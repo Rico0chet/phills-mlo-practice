@@ -1114,6 +1114,7 @@ export const chapters: ChapterInfo[] = [
 // Registry of loaded question sets. Key format: "chapter-page".
 export const questionSets: Record<string, Question[]> = {
   "1-1": chapter1Page1,
+  "1-2": chapter1Page2,
 };
 
 export function getQuestions(chapter: string, page: string): Question[] | null {
