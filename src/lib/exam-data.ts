@@ -1092,6 +1092,129 @@ export const chapter1Page2: Question[] = [
   ], answer: "A" },
 ];
 
+export const chapter1Page3: Question[] = [
+  { id: 1, prompt: "What does FHA stand for?", choices: [
+    { key: "A", text: "Federal Housing Association" },
+    { key: "B", text: "Federal Home Administration" },
+    { key: "C", text: "Federal Housing Administration" },
+    { key: "D", text: "Federal Home Authority" },
+  ], answer: "C" },
+  { id: 2, prompt: "The primary purpose of the FHA is to:", choices: [
+    { key: "A", text: "Build affordable housing" },
+    { key: "B", text: "Stimulate the housing market by providing mortgage insurance" },
+    { key: "C", text: "Guarantee all home loans" },
+    { key: "D", text: "Set property tax rates" },
+  ], answer: "B" },
+  { id: 3, prompt: "FHA mortgage insurance primarily protects:", choices: [
+    { key: "A", text: "The borrower" },
+    { key: "B", text: "The real estate agent" },
+    { key: "C", text: "The lender" },
+    { key: "D", text: "The title company" },
+  ], answer: "C" },
+  { id: 4, prompt: "FHA loans were established in:", choices: [
+    { key: "A", text: "1913" },
+    { key: "B", text: "1929" },
+    { key: "C", text: "1934" },
+    { key: "D", text: "1968" },
+  ], answer: "C" },
+  { id: 5, prompt: "FHA loans are especially designed to help:", choices: [
+    { key: "A", text: "Investors only" },
+    { key: "B", text: "Luxury home buyers" },
+    { key: "C", text: "First-time homebuyers and borrowers with less-than-perfect credit" },
+    { key: "D", text: "Commercial property buyers" },
+  ], answer: "C" },
+  { id: 6, prompt: "What is the minimum credit score required to qualify for the standard FHA 3.5% down payment option?", choices: [
+    { key: "A", text: "500" },
+    { key: "B", text: "540" },
+    { key: "C", text: "580" },
+    { key: "D", text: "620" },
+  ], answer: "C" },
+  { id: 7, prompt: "A borrower with a credit score between 500 and 579 generally must make what minimum down payment?", choices: [
+    { key: "A", text: "3.5%" },
+    { key: "B", text: "5%" },
+    { key: "C", text: "10%" },
+    { key: "D", text: "20%" },
+  ], answer: "C" },
+  { id: 8, prompt: "Even though the FHA allows lower credit scores, individual lenders may:", choices: [
+    { key: "A", text: "Ignore credit scores" },
+    { key: "B", text: "Require stricter lending standards" },
+    { key: "C", text: "Eliminate down payments" },
+    { key: "D", text: "Waive employment verification" },
+  ], answer: "B" },
+  { id: 9, prompt: "Borrowers should generally have how much employment history in the same field?", choices: [
+    { key: "A", text: "Six months" },
+    { key: "B", text: "One year" },
+    { key: "C", text: "Two years" },
+    { key: "D", text: "Five years" },
+  ], answer: "C" },
+  { id: 10, prompt: "Employment gaps may still be acceptable if the borrower:", choices: [
+    { key: "A", text: "Changes careers every year" },
+    { key: "B", text: "Pays cash for the home" },
+    { key: "C", text: "Can explain the gaps and demonstrate future income stability" },
+    { key: "D", text: "Has a co-signer" },
+  ], answer: "C" },
+  { id: 11, prompt: "Lenders evaluate which ratio to determine whether a borrower can afford an FHA loan?", choices: [
+    { key: "A", text: "LTV" },
+    { key: "B", text: "APR" },
+    { key: "C", text: "DTI" },
+    { key: "D", text: "CLTV" },
+  ], answer: "C" },
+  { id: 12, prompt: "According to FHA guidelines, the preferred debt-to-income (DTI) ratio is:", choices: [
+    { key: "A", text: "28%" },
+    { key: "B", text: "36%" },
+    { key: "C", text: "43%" },
+    { key: "D", text: "50%" },
+  ], answer: "C" },
+  { id: 13, prompt: "One of the defining characteristics of an FHA loan is its:", choices: [
+    { key: "A", text: "High down payment requirement" },
+    { key: "B", text: "Low down payment requirement" },
+    { key: "C", text: "No appraisal requirement" },
+    { key: "D", text: "No income verification" },
+  ], answer: "B" },
+  { id: 14, prompt: "A borrower purchasing a $200,000 home using the minimum FHA down payment would generally need:", choices: [
+    { key: "A", text: "$5,000" },
+    { key: "B", text: "$6,000" },
+    { key: "C", text: "$7,000" },
+    { key: "D", text: "$10,000" },
+  ], answer: "C" },
+  { id: 15, prompt: "FHA loans allow down payment assistance from:", choices: [
+    { key: "A", text: "Family members or grants" },
+    { key: "B", text: "Only employers" },
+    { key: "C", text: "Credit card advances" },
+    { key: "D", text: "Mortgage brokers" },
+  ], answer: "A" },
+  { id: 16, prompt: "Mortgage Insurance Premium (MIP) is:", choices: [
+    { key: "A", text: "Optional on FHA loans" },
+    { key: "B", text: "Required for FHA borrowers" },
+    { key: "C", text: "Required only for conventional loans" },
+    { key: "D", text: "Paid only by the lender" },
+  ], answer: "B" },
+  { id: 17, prompt: "The upfront FHA Mortgage Insurance Premium (MIP) is typically:", choices: [
+    { key: "A", text: "0.50%" },
+    { key: "B", text: "1.00%" },
+    { key: "C", text: "1.75%" },
+    { key: "D", text: "2.50%" },
+  ], answer: "C" },
+  { id: 18, prompt: "The annual FHA Mortgage Insurance Premium generally ranges from:", choices: [
+    { key: "A", text: "0.10%–0.25%" },
+    { key: "B", text: "0.45%–1.05%" },
+    { key: "C", text: "1.50%–2.50%" },
+    { key: "D", text: "2.00%–3.00%" },
+  ], answer: "B" },
+  { id: 19, prompt: "Under normal circumstances, FHA Mortgage Insurance Premium (MIP) remains for:", choices: [
+    { key: "A", text: "Five years" },
+    { key: "B", text: "Ten years" },
+    { key: "C", text: "Until the loan reaches 80% LTV" },
+    { key: "D", text: "The life of the loan unless refinanced into a non-FHA loan" },
+  ], answer: "D" },
+  { id: 20, prompt: "FHA loan limits are determined by:", choices: [
+    { key: "A", text: "Fannie Mae" },
+    { key: "B", text: "Freddie Mac" },
+    { key: "C", text: "HUD" },
+    { key: "D", text: "CFPB" },
+  ], answer: "C" },
+];
+
 export type ChapterInfo = {
   number: number;
   title: string;
@@ -1115,6 +1238,7 @@ export const chapters: ChapterInfo[] = [
 export const questionSets: Record<string, Question[]> = {
   "1-1": chapter1Page1,
   "1-2": chapter1Page2,
+  "1-3": chapter1Page3,
 };
 
 export function getQuestions(chapter: string, page: string): Question[] | null {
