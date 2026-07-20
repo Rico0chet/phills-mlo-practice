@@ -1,4 +1,4 @@
-import { chapters } from "./exam-data";
+import { chapters } from "./questions";
 import { supabase } from "@/integrations/supabase/client";
 import { recordCloudAttempt, clearCloudStats } from "./stats.functions";
 
