@@ -1238,6 +1238,7 @@ export const chapters: ChapterInfo[] = [
 export const questionSets: Record<string, Question[]> = {
   "1-1": chapter1Page1,
   "1-2": chapter1Page2,
+  "1-3": chapter1Page3,
 };
 
 export function getQuestions(chapter: string, page: string): Question[] | null {
