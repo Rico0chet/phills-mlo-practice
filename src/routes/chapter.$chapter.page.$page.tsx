@@ -138,6 +138,28 @@ function ChapterPage() {
 
         {questions ? (
           <>
+            {submitted && score !== null && (
+              <div className="mb-6 flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 shadow-sm">
+                <p className="text-sm text-muted-foreground">Your score</p>
+                <p className="text-4xl font-bold text-foreground">
+                  {score} / {questions.length}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {Math.round((score / questions.length) * 100)}% correct
+                </p>
+                <button
+                  onClick={() => {
+                    setAnswers({});
+                    setSubmitted(false);
+                    setAttemptSeed((s) => s + 1);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="mt-2 rounded-md bg-primary px-5 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
             <div className="space-y-4">
               {questions.map((q, i) => (
                 <QuestionCard
