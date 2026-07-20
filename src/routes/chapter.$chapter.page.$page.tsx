@@ -1,6 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getQuestions, getChapter, buildAttempt, QUESTIONS_PER_ATTEMPT, type Question } from "@/lib/exam-data";
+import {
+  fetchQuestions,
+  getChapter,
+  buildAttempt,
+  QUESTIONS_PER_ATTEMPT,
+  type Question,
+} from "@/lib/questions";
 import { QuestionCard } from "@/components/QuestionCard";
 import { recordAttempt } from "@/lib/stats";
 import { ArrowLeft } from "lucide-react";
@@ -20,8 +26,7 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
     if (!chapter) throw notFound();
     const pageNum = Number(params.page);
     if (!Number.isInteger(pageNum) || pageNum < 1 || pageNum > chapter.pages) throw notFound();
-    const questions = getQuestions(params.chapter, params.page);
-    return { questions, chapter };
+    return { chapter };
   },
   component: ChapterPage,
   notFoundComponent: () => (
@@ -41,15 +46,34 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
 
 function ChapterPage() {
   const { chapter: chapterParam, page } = Route.useParams();
-  const { questions: pool, chapter } = Route.useLoaderData() as {
-    questions: Question[] | null;
+  const { chapter } = Route.useLoaderData() as {
     chapter: { number: number; title: string; pages: number };
   };
+  const [pool, setPool] = useState<Question[] | null>(null);
+  const [loading, setLoading] = useState(true);
   const [attemptSeed, setAttemptSeed] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, "A" | "B" | "C" | "D">>({});
+  const [answers, setAnswers] = useState<Record<string, "A" | "B" | "C" | "D">>({});
   const [submitted, setSubmitted] = useState(false);
 
-  // Build a fresh randomized attempt each time the page loads or the learner retries.
+  useEffect(() => {
+    let cancel = false;
+    setLoading(true);
+    fetchQuestions(Number(chapterParam), Number(page))
+      .then((qs) => {
+        if (cancel) return;
+        setPool(qs.length ? qs : null);
+      })
+      .catch(() => {
+        if (!cancel) setPool(null);
+      })
+      .finally(() => {
+        if (!cancel) setLoading(false);
+      });
+    return () => {
+      cancel = true;
+    };
+  }, [chapterParam, page]);
+
   const questions = useMemo(() => {
     if (!pool) return null;
     return buildAttempt(pool, QUESTIONS_PER_ATTEMPT);
@@ -92,7 +116,9 @@ function ChapterPage() {
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             {chapter.title}
           </h1>
-          {questions ? (
+          {loading ? (
+            <p className="mt-2 text-muted-foreground">Loading questions…</p>
+          ) : questions ? (
             <p className="mt-2 text-muted-foreground">
               {questions.length} randomized questions
               {pool && pool.length > questions.length ? ` (from a pool of ${pool.length})` : ""}
@@ -117,7 +143,7 @@ function ChapterPage() {
                   index={i}
                   selected={answers[q.id]}
                   revealed={submitted}
-                  onSelect={(key) => setAnswers((a) => ({ ...a, [q.id]: key }))}
+                  onSelect={(k) => setAnswers((a) => ({ ...a, [q.id]: k }))}
                 />
               ))}
             </div>
@@ -158,14 +184,14 @@ function ChapterPage() {
               )}
             </div>
           </>
-        ) : (
+        ) : !loading ? (
           <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
             <h2 className="text-xl font-semibold text-foreground">Coming soon</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Questions for Chapter {chapterParam}, Page {page} will be added shortly.
             </p>
           </div>
-        )}
+        ) : null}
 
         <div className="mt-6 flex items-center justify-between">
           {prevPage ? (
