@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      chapter_media: {
+        Row: {
+          audio_path: string | null
+          chapter: number
+          created_at: string
+          id: string
+          page: number
+          transcript: string | null
+          updated_at: string
+        }
+        Insert: {
+          audio_path?: string | null
+          chapter: number
+          created_at?: string
+          id?: string
+          page: number
+          transcript?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audio_path?: string | null
+          chapter?: number
+          created_at?: string
+          id?: string
+          page?: number
+          transcript?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chapter_stats: {
         Row: {
           attempts: number

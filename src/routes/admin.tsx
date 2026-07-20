@@ -7,6 +7,7 @@ import {
   type DbQuestion,
 } from "@/lib/questions";
 import { ArrowLeft, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
+import { AdminMediaEditor } from "@/components/AdminMediaEditor";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -38,6 +39,7 @@ const empty = (chapter: number, page: number, sort_order = 0): EditState => ({
 
 function AdminPage() {
   const [authorized, setAuthorized] = useState<null | boolean>(null);
+  const [tab, setTab] = useState<"questions" | "media">("questions");
   const [chapter, setChapter] = useState(1);
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<DbQuestion[]>([]);
@@ -155,12 +157,31 @@ function AdminPage() {
           <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
-          <h1 className="mt-4 text-3xl font-bold text-foreground">Admin · Questions</h1>
-          <p className="mt-2 text-muted-foreground">Add, edit, and remove questions for each chapter and page.</p>
+          <h1 className="mt-4 text-3xl font-bold text-foreground">Admin</h1>
+          <p className="mt-2 text-muted-foreground">Manage questions, audio, and transcripts for each chapter and page.</p>
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={() => setTab("questions")}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "questions" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+            >
+              Questions
+            </button>
+            <button
+              onClick={() => setTab("media")}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "media" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+            >
+              Audio & Transcripts
+            </button>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-8">
+        {tab === "media" ? (
+          <AdminMediaEditor />
+        ) : (
+        <>
+
         <div className="mb-6 flex flex-wrap items-end gap-4 rounded-xl border border-border bg-card p-4">
           <label className="flex flex-col gap-1 text-sm">
             Chapter
@@ -298,7 +319,10 @@ function AdminPage() {
             ))}
           </div>
         )}
+        </>
+        )}
       </main>
+
 
       {edit && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">

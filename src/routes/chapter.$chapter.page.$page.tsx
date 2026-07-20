@@ -8,6 +8,7 @@ import {
   type Question,
 } from "@/lib/questions";
 import { QuestionCard } from "@/components/QuestionCard";
+import { ChapterAudioPlayer } from "@/components/ChapterAudioPlayer";
 import { recordAttempt } from "@/lib/stats";
 import { ArrowLeft } from "lucide-react";
 
@@ -133,6 +134,8 @@ function ChapterPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-6 py-8">
+        <ChapterAudioPlayer chapter={Number(chapterParam)} page={Number(page)} />
+
         {questions ? (
           <>
             <div className="space-y-4">
