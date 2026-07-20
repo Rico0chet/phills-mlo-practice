@@ -1,9 +1,8 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   chapters,
-  fetchQuestions,
   isCurrentUserAdmin,
   type DbQuestion,
 } from "@/lib/questions";
@@ -57,8 +56,6 @@ function AdminPage() {
 
   async function load() {
     setLoading(true);
-    const qs = await fetchQuestions(chapter, page);
-    // fetchQuestions returns Question[]; we need raw
     const { data } = await supabase
       .from("questions")
       .select("*")
@@ -67,7 +64,6 @@ function AdminPage() {
       .order("sort_order", { ascending: true });
     setRows((data as DbQuestion[]) ?? []);
     setLoading(false);
-    void qs;
   }
 
   useEffect(() => {
