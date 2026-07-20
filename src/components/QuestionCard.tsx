@@ -53,7 +53,7 @@ export function QuestionCard({ question, index, selected, revealed, onSelect }: 
         })}
       </div>
       {isRevealed && (
-        <p className="mt-4 rounded-md bg-muted p-3 text-sm text-muted-foreground">
+        <p className="mt-4 whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-muted-foreground">
           <span className={cn("font-semibold", answeredCorrectly ? "text-emerald-700" : "text-red-700")}>
             {hasSelection
               ? answeredCorrectly
