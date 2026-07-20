@@ -22,6 +22,7 @@ const WEAK = 0.6;
 function StatsPage() {
   const [summary, setSummary] = useState<ChapterSummary[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
   const { user, loading: authLoading } = useSession();
 
   useEffect(() => {
@@ -156,18 +157,39 @@ function StatsPage() {
               />
             )}
 
-            <div className="flex justify-end">
-              <button
-                onClick={() => {
-                  if (confirm("Clear all saved stats?")) {
-                    clearStats();
-                    setSummary(summarize({}));
-                  }
-                }}
-                className="text-sm text-muted-foreground hover:text-red-600"
-              >
-                Reset stats
-              </button>
+            <div className="flex flex-col items-end gap-3">
+              {confirmReset ? (
+                <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+                  <p className="text-sm font-medium text-foreground">
+                    Are you sure you want to reset your stats? This can't be undone.
+                  </p>
+                  <div className="mt-3 flex justify-end gap-2">
+                    <button
+                      onClick={() => setConfirmReset(false)}
+                      className="rounded-md border border-border bg-background px-4 py-1.5 text-sm font-medium text-foreground hover:bg-muted"
+                    >
+                      No
+                    </button>
+                    <button
+                      onClick={() => {
+                        clearStats();
+                        setSummary(summarize({}));
+                        setConfirmReset(false);
+                      }}
+                      className="rounded-md bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-red-700"
+                    >
+                      Yes, reset
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmReset(true)}
+                  className="text-sm text-muted-foreground hover:text-red-600"
+                >
+                  Reset stats
+                </button>
+              )}
             </div>
           </>
         )}
