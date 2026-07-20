@@ -197,12 +197,6 @@ function StatsPage() {
     </div>
   );
 }
-          </>
-        )}
-      </main>
-    </div>
-  );
-}
 
 function Section({
   title,
