@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChapterChapterPagePageRouteImport } from './routes/chapter.$chapter.page.$page'
 
@@ -22,6 +23,11 @@ const StatsRoute = StatsRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,12 +43,14 @@ const ChapterChapterPagePageRoute = ChapterChapterPagePageRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/stats': typeof StatsRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/stats': typeof StatsRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
@@ -50,20 +58,33 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/stats': typeof StatsRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/stats' | '/chapter/$chapter/page/$page'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/stats'
+    | '/chapter/$chapter/page/$page'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/stats' | '/chapter/$chapter/page/$page'
-  id: '__root__' | '/' | '/auth' | '/stats' | '/chapter/$chapter/page/$page'
+  to: '/' | '/admin' | '/auth' | '/stats' | '/chapter/$chapter/page/$page'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/stats'
+    | '/chapter/$chapter/page/$page'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   StatsRoute: typeof StatsRoute
   ChapterChapterPagePageRoute: typeof ChapterChapterPagePageRoute
@@ -85,6 +106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +132,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   StatsRoute: StatsRoute,
   ChapterChapterPagePageRoute: ChapterChapterPagePageRoute,

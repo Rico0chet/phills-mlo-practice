@@ -1,4 +1,4 @@
-import type { Question } from "@/lib/exam-data";
+import type { Question } from "@/lib/questions";
 import { cn } from "@/lib/utils";
 import { Check, X } from "lucide-react";
 
