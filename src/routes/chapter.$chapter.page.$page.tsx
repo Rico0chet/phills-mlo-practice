@@ -84,6 +84,16 @@ function ChapterPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool, attemptSeed]);
 
+  // Start timer when questions are ready and no submission yet; tick every second.
+  useEffect(() => {
+    if (!questions || submitted) return;
+    const start = Date.now();
+    setStartedAt(start);
+    setElapsedMs(0);
+    const id = setInterval(() => setElapsedMs(Date.now() - start), 1000);
+    return () => clearInterval(id);
+  }, [questions, submitted]);
+
   const score = useMemo(() => {
     if (!submitted || !questions) return null;
     let correct = 0;
