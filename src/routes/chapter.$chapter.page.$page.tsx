@@ -151,6 +151,14 @@ function ChapterPage() {
 
         {questions ? (
           <>
+            {!submitted && (
+              <div className="mb-4 flex items-center justify-between rounded-lg border border-border bg-card px-4 py-2 text-sm">
+                <span className="text-muted-foreground">Time elapsed</span>
+                <span className="font-mono font-semibold tabular-nums text-foreground">
+                  {formatDuration(elapsedMs)}
+                </span>
+              </div>
+            )}
             {submitted && score !== null && (
               <div className="mb-6 flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 shadow-sm">
                 <p className="text-sm text-muted-foreground">Your score</p>
@@ -160,10 +168,20 @@ function ChapterPage() {
                 <p className="text-sm text-muted-foreground">
                   {Math.round((score / questions.length) * 100)}% correct
                 </p>
+                {finalMs !== null && (
+                  <p className="text-sm text-muted-foreground">
+                    Finished in{" "}
+                    <span className="font-mono font-semibold tabular-nums text-foreground">
+                      {formatDuration(finalMs)}
+                    </span>{" "}
+                    · {formatPerQuestion(finalMs, questions.length)} per question
+                  </p>
+                )}
                 <button
                   onClick={() => {
                     setAnswers({});
                     setSubmitted(false);
+                    setFinalMs(null);
                     setAttemptSeed((s) => s + 1);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
