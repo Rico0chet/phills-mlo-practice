@@ -210,6 +210,7 @@ function ChapterPage() {
                   onClick={() => {
                     setAnswers({});
                     setSubmitted(false);
+                    setFinalMs(null);
                     setAttemptSeed((s) => s + 1);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
@@ -220,6 +221,7 @@ function ChapterPage() {
               ) : (
                 <button
                   onClick={() => {
+                    if (startedAt !== null) setFinalMs(Date.now() - startedAt);
                     setSubmitted(true);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
