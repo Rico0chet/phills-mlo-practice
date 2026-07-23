@@ -55,6 +55,9 @@ function ChapterPage() {
   const [attemptSeed, setAttemptSeed] = useState(0);
   const [answers, setAnswers] = useState<Record<string, "A" | "B" | "C" | "D">>({});
   const [submitted, setSubmitted] = useState(false);
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [finalMs, setFinalMs] = useState<number | null>(null);
 
   useEffect(() => {
     let cancel = false;
