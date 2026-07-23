@@ -55,6 +55,9 @@ function ChapterPage() {
   const [attemptSeed, setAttemptSeed] = useState(0);
   const [answers, setAnswers] = useState<Record<string, "A" | "B" | "C" | "D">>({});
   const [submitted, setSubmitted] = useState(false);
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [finalMs, setFinalMs] = useState<number | null>(null);
 
   useEffect(() => {
     let cancel = false;
@@ -80,6 +83,16 @@ function ChapterPage() {
     return buildAttempt(pool, QUESTIONS_PER_ATTEMPT);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool, attemptSeed]);
+
+  // Start timer when questions are ready and no submission yet; tick every second.
+  useEffect(() => {
+    if (!questions || submitted) return;
+    const start = Date.now();
+    setStartedAt(start);
+    setElapsedMs(0);
+    const id = setInterval(() => setElapsedMs(Date.now() - start), 1000);
+    return () => clearInterval(id);
+  }, [questions, submitted]);
 
   const score = useMemo(() => {
     if (!submitted || !questions) return null;
@@ -138,6 +151,14 @@ function ChapterPage() {
 
         {questions ? (
           <>
+            {!submitted && (
+              <div className="mb-4 flex items-center justify-between rounded-lg border border-border bg-card px-4 py-2 text-sm">
+                <span className="text-muted-foreground">Time elapsed</span>
+                <span className="font-mono font-semibold tabular-nums text-foreground">
+                  {formatDuration(elapsedMs)}
+                </span>
+              </div>
+            )}
             {submitted && score !== null && (
               <div className="mb-6 flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 shadow-sm">
                 <p className="text-sm text-muted-foreground">Your score</p>
@@ -147,10 +168,20 @@ function ChapterPage() {
                 <p className="text-sm text-muted-foreground">
                   {Math.round((score / questions.length) * 100)}% correct
                 </p>
+                {finalMs !== null && (
+                  <p className="text-sm text-muted-foreground">
+                    Finished in{" "}
+                    <span className="font-mono font-semibold tabular-nums text-foreground">
+                      {formatDuration(finalMs)}
+                    </span>{" "}
+                    · {formatPerQuestion(finalMs, questions.length)} per question
+                  </p>
+                )}
                 <button
                   onClick={() => {
                     setAnswers({});
                     setSubmitted(false);
+                    setFinalMs(null);
                     setAttemptSeed((s) => s + 1);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
@@ -179,6 +210,7 @@ function ChapterPage() {
                   onClick={() => {
                     setAnswers({});
                     setSubmitted(false);
+                    setFinalMs(null);
                     setAttemptSeed((s) => s + 1);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
@@ -189,6 +221,7 @@ function ChapterPage() {
               ) : (
                 <button
                   onClick={() => {
+                    if (startedAt !== null) setFinalMs(Date.now() - startedAt);
                     setSubmitted(true);
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
@@ -236,4 +269,19 @@ function ChapterPage() {
       </main>
     </div>
   );
+}
+
+function formatDuration(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+function formatPerQuestion(ms: number, count: number): string {
+  if (!count) return "0s";
+  const perSec = ms / 1000 / count;
+  return perSec >= 60 ? `${(perSec / 60).toFixed(1)}m` : `${perSec.toFixed(1)}s`;
 }
