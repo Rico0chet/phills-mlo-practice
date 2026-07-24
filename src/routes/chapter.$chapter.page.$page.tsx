@@ -285,6 +285,17 @@ function formatDuration(ms: number): string {
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
+const PAGE_SUBTITLES: Record<string, string> = {
+  "1-1": "Conforming vs Non-Conforming",
+  "1-2": "Conforming vs Non-Conforming (continued)",
+  "1-3": "FHA",
+  "1-4": "V.A.",
+};
+
+function getPageSubtitle(chapter: number, page: number): string | null {
+  return PAGE_SUBTITLES[`${chapter}-${page}`] ?? null;
+}
+
 function formatPerQuestion(ms: number, count: number): string {
   if (!count) return "0s";
   const perSec = ms / 1000 / count;
