@@ -291,6 +291,8 @@ const PAGE_SUBTITLES: Record<string, string> = {
   "1-3": "FHA",
   "1-4": "V.A.",
   "1-5": "USDA Loans",
+};
+
 
 function getPageSubtitle(chapter: number, page: number): string | null {
   return PAGE_SUBTITLES[`${chapter}-${page}`] ?? null;
