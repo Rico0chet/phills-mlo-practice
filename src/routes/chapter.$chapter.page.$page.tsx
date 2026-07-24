@@ -130,6 +130,11 @@ function ChapterPage() {
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             {chapter.title}
           </h1>
+          {getPageSubtitle(Number(chapterParam), Number(page)) && (
+            <p className="mt-1 text-lg font-medium text-muted-foreground">
+              {getPageSubtitle(Number(chapterParam), Number(page))}
+            </p>
+          )}
           {loading ? (
             <p className="mt-2 text-muted-foreground">Loading questions…</p>
           ) : questions ? (
@@ -278,6 +283,17 @@ function formatDuration(ms: number): string {
   const s = total % 60;
   const pad = (n: number) => n.toString().padStart(2, "0");
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+const PAGE_SUBTITLES: Record<string, string> = {
+  "1-1": "Conforming vs Non-Conforming",
+  "1-2": "Conforming vs Non-Conforming (continued)",
+  "1-3": "FHA",
+  "1-4": "V.A.",
+};
+
+function getPageSubtitle(chapter: number, page: number): string | null {
+  return PAGE_SUBTITLES[`${chapter}-${page}`] ?? null;
 }
 
 function formatPerQuestion(ms: number, count: number): string {
