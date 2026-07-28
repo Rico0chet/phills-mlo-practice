@@ -28,7 +28,7 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
     if (!chapter) throw notFound();
     const pageNum = Number(params.page);
     if (!Number.isInteger(pageNum) || pageNum < 1 || pageNum > chapter.pages) throw notFound();
-    return { chapter };
+    return { chapter, pageSubtitle: getPageSubtitle(Number(params.chapter), pageNum) };
   },
   component: ChapterPage,
   notFoundComponent: () => (
@@ -48,8 +48,9 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
 
 function ChapterPage() {
   const { chapter: chapterParam, page } = Route.useParams();
-  const { chapter } = Route.useLoaderData() as {
+  const { chapter, pageSubtitle } = Route.useLoaderData() as {
     chapter: { number: number; title: string; pages: number };
+    pageSubtitle: string | null;
   };
   const [pool, setPool] = useState<Question[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -131,9 +132,9 @@ function ChapterPage() {
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             {chapter.title}
           </h1>
-          {getPageSubtitle(Number(chapterParam), Number(page)) && (
+          {pageSubtitle && (
             <p className="mt-1 text-lg font-medium text-muted-foreground">
-              {getPageSubtitle(Number(chapterParam), Number(page))}
+              {pageSubtitle}
             </p>
           )}
           {loading ? (
