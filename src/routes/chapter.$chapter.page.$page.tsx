@@ -131,9 +131,9 @@ function ChapterPage() {
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             {chapter.title}
           </h1>
-          {getPageSubtitle(Number(chapterParam), Number(page)) && (
+          {pageSubtitle && (
             <p className="mt-1 text-lg font-medium text-muted-foreground">
-              {getPageSubtitle(Number(chapterParam), Number(page))}
+              {pageSubtitle}
             </p>
           )}
           {loading ? (
