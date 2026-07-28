@@ -10,6 +10,7 @@ import {
 import { QuestionCard } from "@/components/QuestionCard";
 import { ChapterAudioPlayer } from "@/components/ChapterAudioPlayer";
 import { recordAttempt } from "@/lib/stats";
+import { getPageSubtitle } from "@/lib/page-titles";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/chapter/$chapter/page/$page")({
@@ -285,18 +286,6 @@ function formatDuration(ms: number): string {
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
-const PAGE_SUBTITLES: Record<string, string> = {
-  "1-1": "Conforming vs Non-Conforming",
-  "1-2": "Conforming vs Non-Conforming (continued)",
-  "1-3": "FHA",
-  "1-4": "V.A.",
-  "1-5": "USDA Loans",
-};
-
-
-function getPageSubtitle(chapter: number, page: number): string | null {
-  return PAGE_SUBTITLES[`${chapter}-${page}`] ?? null;
-}
 
 function formatPerQuestion(ms: number, count: number): string {
   if (!count) return "0s";
