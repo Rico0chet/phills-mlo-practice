@@ -10,6 +10,7 @@ import {
 import { QuestionCard } from "@/components/QuestionCard";
 import { ChapterAudioPlayer } from "@/components/ChapterAudioPlayer";
 import { recordAttempt } from "@/lib/stats";
+import { getPageSubtitle } from "@/lib/page-titles";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/chapter/$chapter/page/$page")({
