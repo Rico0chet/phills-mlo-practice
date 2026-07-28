@@ -28,7 +28,7 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
     if (!chapter) throw notFound();
     const pageNum = Number(params.page);
     if (!Number.isInteger(pageNum) || pageNum < 1 || pageNum > chapter.pages) throw notFound();
-    return { chapter };
+    return { chapter, pageSubtitle: getPageSubtitle(Number(params.chapter), pageNum) };
   },
   component: ChapterPage,
   notFoundComponent: () => (
