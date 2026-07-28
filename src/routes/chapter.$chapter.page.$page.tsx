@@ -86,15 +86,20 @@ function ChapterPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool, attemptSeed]);
 
-  // Start timer when questions are ready and no submission yet; tick every second.
+  // Reset the timer whenever a new attempt is built.
   useEffect(() => {
-    if (!questions || submitted) return;
-    const start = Date.now();
-    setStartedAt(start);
+    setStartedAt(null);
     setElapsedMs(0);
-    const id = setInterval(() => setElapsedMs(Date.now() - start), 1000);
+  }, [questions]);
+
+  // Tick only after the learner answers their first question.
+  useEffect(() => {
+    if (startedAt === null || submitted) return;
+    setElapsedMs(Date.now() - startedAt);
+    const id = setInterval(() => setElapsedMs(Date.now() - startedAt), 1000);
     return () => clearInterval(id);
-  }, [questions, submitted]);
+  }, [startedAt, submitted]);
+
 
   const score = useMemo(() => {
     if (!submitted || !questions) return null;
