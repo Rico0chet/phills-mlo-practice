@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      chapter_resources: {
+        Row: {
+          chapter: number
+          created_at: string
+          description: string | null
+          id: string
+          page: number
+          sort_order: number
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          chapter: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          page: number
+          sort_order?: number
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          chapter?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          page?: number
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       chapter_stats: {
         Row: {
           attempts: number
