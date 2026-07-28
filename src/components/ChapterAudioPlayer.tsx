@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Headphones } from "lucide-react";
 import { fetchMedia, getSignedAudioUrl } from "@/lib/media";
+import { TranscriptAnnotator } from "@/components/TranscriptAnnotator";
+
 
 export function ChapterAudioPlayer({ chapter, page }: { chapter: number; page: number }) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
