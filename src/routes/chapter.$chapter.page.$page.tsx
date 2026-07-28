@@ -211,7 +211,11 @@ function ChapterPage() {
                   index={i}
                   selected={answers[q.id]}
                   revealed={submitted}
-                  onSelect={(k) => setAnswers((a) => ({ ...a, [q.id]: k }))}
+                  onSelect={(k) => {
+                    setStartedAt((s) => s ?? Date.now());
+                    setAnswers((a) => ({ ...a, [q.id]: k }));
+                  }}
+
                 />
               ))}
             </div>
