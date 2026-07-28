@@ -48,8 +48,9 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
 
 function ChapterPage() {
   const { chapter: chapterParam, page } = Route.useParams();
-  const { chapter } = Route.useLoaderData() as {
+  const { chapter, pageSubtitle } = Route.useLoaderData() as {
     chapter: { number: number; title: string; pages: number };
+    pageSubtitle: string | null;
   };
   const [pool, setPool] = useState<Question[] | null>(null);
   const [loading, setLoading] = useState(true);
