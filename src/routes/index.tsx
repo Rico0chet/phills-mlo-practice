@@ -67,7 +67,7 @@ function Index() {
                     params={{ chapter: String(ch.number), page: String(p) }}
                     className="rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground"
                   >
-                    Page {p}
+                    {getPageLabel(ch.number, p)}
                   </Link>
                 ))}
               </div>
