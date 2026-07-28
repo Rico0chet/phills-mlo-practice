@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Headphones } from "lucide-react";
 import { fetchMedia, getSignedAudioUrl } from "@/lib/media";
+import { TranscriptAnnotator } from "@/components/TranscriptAnnotator";
+
 
 export function ChapterAudioPlayer({ chapter, page }: { chapter: number; page: number }) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -52,10 +54,9 @@ export function ChapterAudioPlayer({ chapter, page }: { chapter: number; page: n
             {showTranscript ? "Hide" : "Show"} transcript
           </button>
           {showTranscript && (
-            <div className="mt-3 max-h-96 overflow-y-auto whitespace-pre-wrap rounded-md border border-border bg-background p-4 text-sm leading-relaxed text-foreground">
-              {transcript}
-            </div>
+            <TranscriptAnnotator chapter={chapter} page={page} text={transcript} />
           )}
+
         </>
       )}
     </div>
