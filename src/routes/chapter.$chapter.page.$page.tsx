@@ -9,6 +9,7 @@ import {
 } from "@/lib/questions";
 import { QuestionCard } from "@/components/QuestionCard";
 import { ChapterAudioPlayer } from "@/components/ChapterAudioPlayer";
+import { ChapterResources } from "@/components/ChapterResources";
 import { recordAttempt } from "@/lib/stats";
 import { getPageSubtitle } from "@/lib/page-titles";
 import { ArrowLeft } from "lucide-react";
@@ -160,6 +161,7 @@ function ChapterPage() {
 
       <main className="mx-auto max-w-3xl px-6 py-8">
         <ChapterAudioPlayer chapter={Number(chapterParam)} page={Number(page)} />
+        <ChapterResources chapter={Number(chapterParam)} page={Number(page)} />
 
         {questions ? (
           <>
