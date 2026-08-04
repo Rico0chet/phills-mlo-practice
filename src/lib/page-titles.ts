@@ -4,6 +4,7 @@ export const PAGE_SUBTITLES: Record<string, string> = {
   "1-3": "FHA",
   "1-4": "V.A.",
   "1-5": "USDA Loans",
+  "1-6": "Non-QM",
 };
 
 export function getPageSubtitle(chapter: number, page: number): string | null {
