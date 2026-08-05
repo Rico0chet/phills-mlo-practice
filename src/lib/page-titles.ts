@@ -6,6 +6,7 @@ export const PAGE_SUBTITLES: Record<string, string> = {
   "1-5": "USDA Loans",
   "1-6": "Non-QM",
   "2-1": "RESPA (RESPA 1974)",
+  "4-1": "Mortgage Mathematics",
 };
 
 
