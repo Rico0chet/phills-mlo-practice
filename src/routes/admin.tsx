@@ -99,31 +99,38 @@ function AdminPage() {
 
   async function saveEdit() {
     if (!edit) return;
-    let payload: Record<string, unknown>;
+
     if (edit.question_type === "numeric") {
       if (!edit.prompt.trim() || !edit.numeric_answer.trim()) {
         setMsg("Prompt and numeric answer are required.");
         return;
       }
-      payload = {
+      const payload = {
         chapter: edit.chapter,
         page: edit.page,
         prompt: edit.prompt.trim(),
         question_type: "numeric",
-        choices: [],
+        choices: [] as string[],
         correct_index: -1,
         numeric_answer: edit.numeric_answer.trim(),
         answer_tolerance: edit.answer_tolerance,
         explanation: edit.explanation.trim() || null,
         sort_order: edit.sort_order,
       };
+      if (edit.id) {
+        const { error } = await supabase.from("questions").update(payload).eq("id", edit.id);
+        if (error) { setMsg(error.message); return; }
+      } else {
+        const { error } = await supabase.from("questions").insert(payload);
+        if (error) { setMsg(error.message); return; }
+      }
     } else {
       const choices = edit.choices.map((c) => c.trim());
       if (!edit.prompt.trim() || choices.some((c) => !c)) {
         setMsg("Prompt and all 4 choices are required.");
         return;
       }
-      payload = {
+      const payload = {
         chapter: edit.chapter,
         page: edit.page,
         prompt: edit.prompt.trim(),
@@ -135,14 +142,15 @@ function AdminPage() {
         explanation: edit.explanation.trim() || null,
         sort_order: edit.sort_order,
       };
+      if (edit.id) {
+        const { error } = await supabase.from("questions").update(payload).eq("id", edit.id);
+        if (error) { setMsg(error.message); return; }
+      } else {
+        const { error } = await supabase.from("questions").insert(payload);
+        if (error) { setMsg(error.message); return; }
+      }
     }
-    if (edit.id) {
-      const { error } = await supabase.from("questions").update(payload).eq("id", edit.id);
-      if (error) { setMsg(error.message); return; }
-    } else {
-      const { error } = await supabase.from("questions").insert(payload);
-      if (error) { setMsg(error.message); return; }
-    }
+
     setEdit(null);
     setMsg(null);
     await load();
