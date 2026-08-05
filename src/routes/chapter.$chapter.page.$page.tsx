@@ -4,12 +4,16 @@ import {
   fetchQuestions,
   getChapter,
   buildAttempt,
+  isNumericCorrect,
   QUESTIONS_PER_ATTEMPT,
   type Question,
 } from "@/lib/questions";
 import { QuestionCard } from "@/components/QuestionCard";
+import { MathQuestionCard } from "@/components/MathQuestionCard";
 import { ChapterAudioPlayer } from "@/components/ChapterAudioPlayer";
 import { ChapterResources } from "@/components/ChapterResources";
+import { FormulaReference } from "@/components/FormulaReference";
+import { Calculator } from "@/components/Calculator";
 import { recordAttempt } from "@/lib/stats";
 import { getPageSubtitle } from "@/lib/page-titles";
 import { ArrowLeft } from "lucide-react";
@@ -56,7 +60,7 @@ function ChapterPage() {
   const [pool, setPool] = useState<Question[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [attemptSeed, setAttemptSeed] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, "A" | "B" | "C" | "D">>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -105,7 +109,13 @@ function ChapterPage() {
   const score = useMemo(() => {
     if (!submitted || !questions) return null;
     let correct = 0;
-    for (const q of questions) if (answers[q.id] === q.answer) correct++;
+    for (const q of questions) {
+      if (q.type === "numeric") {
+        if (isNumericCorrect(answers[q.id] ?? "", q.numericAnswer ?? "", q.tolerance ?? 0.01)) correct++;
+      } else {
+        if (answers[q.id] === q.answer) correct++;
+      }
+    }
     return correct;
   }, [submitted, answers, questions]);
 
@@ -162,6 +172,12 @@ function ChapterPage() {
       <main className="mx-auto max-w-3xl px-6 py-8">
         <ChapterAudioPlayer chapter={Number(chapterParam)} page={Number(page)} />
         <ChapterResources chapter={Number(chapterParam)} page={Number(page)} />
+        {Number(chapterParam) === 4 && (
+          <>
+            <FormulaReference />
+            <Calculator />
+          </>
+        )}
 
         {questions ? (
           <>
@@ -206,20 +222,33 @@ function ChapterPage() {
               </div>
             )}
             <div className="space-y-4">
-              {questions.map((q, i) => (
-                <QuestionCard
-                  key={q.id}
-                  question={q}
-                  index={i}
-                  selected={answers[q.id]}
-                  revealed={submitted}
-                  onSelect={(k) => {
-                    setStartedAt((s) => s ?? Date.now());
-                    setAnswers((a) => ({ ...a, [q.id]: k }));
-                  }}
-
-                />
-              ))}
+              {questions.map((q, i) =>
+                q.type === "numeric" ? (
+                  <MathQuestionCard
+                    key={q.id}
+                    question={q}
+                    index={i}
+                    value={answers[q.id]}
+                    revealed={submitted}
+                    onAnswer={(v) => {
+                      setStartedAt((s) => s ?? Date.now());
+                      setAnswers((a) => ({ ...a, [q.id]: v }));
+                    }}
+                  />
+                ) : (
+                  <QuestionCard
+                    key={q.id}
+                    question={q}
+                    index={i}
+                    selected={answers[q.id]}
+                    revealed={submitted}
+                    onSelect={(k) => {
+                      setStartedAt((s) => s ?? Date.now());
+                      setAnswers((a) => ({ ...a, [q.id]: k }));
+                    }}
+                  />
+                ),
+              )}
             </div>
 
             <div className="mt-8 flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 shadow-sm">
