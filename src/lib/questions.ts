@@ -3,8 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 export type Question = {
   id: string;
   prompt: string;
+  type: "multiple_choice" | "numeric";
   choices: { key: "A" | "B" | "C" | "D"; text: string }[];
   answer: "A" | "B" | "C" | "D";
+  numericAnswer?: string;
+  tolerance?: number;
   explanation?: string;
 };
 
@@ -17,16 +20,32 @@ export type DbQuestion = {
   correct_index: number;
   explanation: string | null;
   sort_order: number;
+  question_type: string;
+  numeric_answer: string | null;
+  answer_tolerance: number | null;
 };
 
 const LETTERS: ("A" | "B" | "C" | "D")[] = ["A", "B", "C", "D"];
 
 export function dbToQuestion(r: DbQuestion): Question {
+  if (r.question_type === "numeric") {
+    return {
+      id: r.id,
+      prompt: r.prompt,
+      type: "numeric",
+      choices: [],
+      answer: "A",
+      numericAnswer: r.numeric_answer ?? "",
+      tolerance: r.answer_tolerance ?? 0.01,
+      explanation: r.explanation ?? undefined,
+    };
+  }
   return {
     id: r.id,
     prompt: r.prompt,
-    choices: r.choices.map((text, i) => ({ key: LETTERS[i], text })),
-    answer: LETTERS[r.correct_index],
+    type: "multiple_choice",
+    choices: (r.choices ?? []).map((text, i) => ({ key: LETTERS[i], text })),
+    answer: LETTERS[r.correct_index] ?? "A",
     explanation: r.explanation ?? undefined,
   };
 }
@@ -34,7 +53,7 @@ export function dbToQuestion(r: DbQuestion): Question {
 export async function fetchQuestions(chapter: number, page: number): Promise<Question[]> {
   const { data, error } = await supabase
     .from("questions")
-    .select("id,chapter,page,prompt,choices,correct_index,explanation,sort_order")
+    .select("id,chapter,page,prompt,choices,correct_index,explanation,sort_order,question_type,numeric_answer,answer_tolerance")
     .eq("chapter", chapter)
     .eq("page", page)
     .order("sort_order", { ascending: true });
@@ -45,7 +64,7 @@ export async function fetchQuestions(chapter: number, page: number): Promise<Que
 export async function fetchAllQuestions(): Promise<DbQuestion[]> {
   const { data, error } = await supabase
     .from("questions")
-    .select("id,chapter,page,prompt,choices,correct_index,explanation,sort_order")
+    .select("id,chapter,page,prompt,choices,correct_index,explanation,sort_order,question_type,numeric_answer,answer_tolerance")
     .order("chapter", { ascending: true })
     .order("page", { ascending: true })
     .order("sort_order", { ascending: true });
@@ -87,11 +106,28 @@ function shuffle<T>(arr: T[]): T[] {
 export function buildAttempt(pool: Question[], count = QUESTIONS_PER_ATTEMPT): Question[] {
   const picked = shuffle(pool).slice(0, Math.min(count, pool.length));
   return picked.map((q) => {
+    if (q.type === "numeric") return q;
     const shuffledChoices = shuffle(q.choices);
     const newChoices = shuffledChoices.map((c, i) => ({ key: LETTERS[i], text: c.text }));
     const correctIdx = shuffledChoices.findIndex((c) => c.key === q.answer);
     return { ...q, choices: newChoices, answer: LETTERS[correctIdx] };
   });
+}
+
+/** Extract the numeric value from a string like "$1,456.32" or "3.5%" */
+export function parseNumeric(s: string): number | null {
+  const cleaned = s.replace(/[^0-9.\-]/g, "");
+  if (!cleaned || cleaned === "-" || cleaned === "." || cleaned === "-.") return null;
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? null : n;
+}
+
+/** Compare a learner's answer to the correct answer within tolerance */
+export function isNumericCorrect(userAnswer: string, correctAnswer: string, tolerance = 0.01): boolean {
+  const user = parseNumeric(userAnswer);
+  const correct = parseNumeric(correctAnswer);
+  if (user === null || correct === null) return false;
+  return Math.abs(user - correct) <= tolerance;
 }
 
 export async function isCurrentUserAdmin(): Promise<boolean> {
