@@ -139,38 +139,47 @@ export type Database = {
       }
       questions: {
         Row: {
+          answer_tolerance: number | null
           chapter: number
           choices: Json
           correct_index: number
           created_at: string
           explanation: string | null
           id: string
+          numeric_answer: string | null
           page: number
           prompt: string
+          question_type: string
           sort_order: number
           updated_at: string
         }
         Insert: {
+          answer_tolerance?: number | null
           chapter: number
           choices: Json
           correct_index: number
           created_at?: string
           explanation?: string | null
           id?: string
+          numeric_answer?: string | null
           page: number
           prompt: string
+          question_type?: string
           sort_order?: number
           updated_at?: string
         }
         Update: {
+          answer_tolerance?: number | null
           chapter?: number
           choices?: Json
           correct_index?: number
           created_at?: string
           explanation?: string | null
           id?: string
+          numeric_answer?: string | null
           page?: number
           prompt?: string
+          question_type?: string
           sort_order?: number
           updated_at?: string
         }
