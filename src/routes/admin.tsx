@@ -22,8 +22,11 @@ type EditState = {
   chapter: number;
   page: number;
   prompt: string;
+  question_type: "multiple_choice" | "numeric";
   choices: string[];
   correct_index: number;
+  numeric_answer: string;
+  answer_tolerance: number;
   explanation: string;
   sort_order: number;
 };
@@ -32,8 +35,11 @@ const empty = (chapter: number, page: number, sort_order = 0): EditState => ({
   chapter,
   page,
   prompt: "",
+  question_type: "multiple_choice",
   choices: ["", "", "", ""],
   correct_index: 0,
+  numeric_answer: "",
+  answer_tolerance: 0.01,
   explanation: "",
   sort_order,
 });
@@ -93,18 +99,42 @@ function AdminPage() {
 
   async function saveEdit() {
     if (!edit) return;
-    const payload = {
-      chapter: edit.chapter,
-      page: edit.page,
-      prompt: edit.prompt.trim(),
-      choices: edit.choices.map((c) => c.trim()),
-      correct_index: edit.correct_index,
-      explanation: edit.explanation.trim() || null,
-      sort_order: edit.sort_order,
-    };
-    if (!payload.prompt || payload.choices.some((c) => !c)) {
-      setMsg("Prompt and all 4 choices are required.");
-      return;
+    let payload: Record<string, unknown>;
+    if (edit.question_type === "numeric") {
+      if (!edit.prompt.trim() || !edit.numeric_answer.trim()) {
+        setMsg("Prompt and numeric answer are required.");
+        return;
+      }
+      payload = {
+        chapter: edit.chapter,
+        page: edit.page,
+        prompt: edit.prompt.trim(),
+        question_type: "numeric",
+        choices: [],
+        correct_index: -1,
+        numeric_answer: edit.numeric_answer.trim(),
+        answer_tolerance: edit.answer_tolerance,
+        explanation: edit.explanation.trim() || null,
+        sort_order: edit.sort_order,
+      };
+    } else {
+      const choices = edit.choices.map((c) => c.trim());
+      if (!edit.prompt.trim() || choices.some((c) => !c)) {
+        setMsg("Prompt and all 4 choices are required.");
+        return;
+      }
+      payload = {
+        chapter: edit.chapter,
+        page: edit.page,
+        prompt: edit.prompt.trim(),
+        question_type: "multiple_choice",
+        choices,
+        correct_index: edit.correct_index,
+        numeric_answer: null,
+        answer_tolerance: 0.01,
+        explanation: edit.explanation.trim() || null,
+        sort_order: edit.sort_order,
+      };
     }
     if (edit.id) {
       const { error } = await supabase.from("questions").update(payload).eq("id", edit.id);
@@ -280,23 +310,39 @@ function AdminPage() {
           <p className="text-muted-foreground">Loading…</p>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">{rows.length} questions in this page.</p>
+            <p className="text-sm text-muted-foreground">
+              {rows.length} questions in this page.
+            </p>
             {rows.map((r, i) => (
               <div key={r.id} className="rounded-lg border border-border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
-                    <p className="text-xs text-muted-foreground">#{i + 1}</p>
+                    <p className="text-xs text-muted-foreground">
+                      #{i + 1}{" "}
+                      {r.question_type === "numeric" && (
+                        <span className="ml-1 rounded bg-primary/10 px-1.5 py-0.5 text-xs text-primary">numeric</span>
+                      )}
+                    </p>
                     <p className="mt-1 font-medium text-foreground">{r.prompt}</p>
-                    <ul className="mt-2 space-y-1 text-sm">
-                      {r.choices.map((c, ci) => (
-                        <li
-                          key={ci}
-                          className={ci === r.correct_index ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}
-                        >
-                          {String.fromCharCode(65 + ci)}) {c} {ci === r.correct_index && "✓"}
-                        </li>
-                      ))}
-                    </ul>
+                    {r.question_type === "numeric" ? (
+                      <p className="mt-2 text-sm text-emerald-600 dark:text-emerald-400">
+                        Answer: {r.numeric_answer}{" "}
+                        <span className="text-muted-foreground">
+                          (±{r.answer_tolerance ?? 0.01})
+                        </span>
+                      </p>
+                    ) : (
+                      <ul className="mt-2 space-y-1 text-sm">
+                        {r.choices.map((c, ci) => (
+                          <li
+                            key={ci}
+                            className={ci === r.correct_index ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}
+                          >
+                            {String.fromCharCode(65 + ci)}) {c} {ci === r.correct_index && "✓"}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                   <div className="flex flex-col gap-2">
                     <button
@@ -305,8 +351,11 @@ function AdminPage() {
                         chapter: r.chapter,
                         page: r.page,
                         prompt: r.prompt,
-                        choices: [...r.choices, "", "", "", ""].slice(0, 4),
+                        question_type: (r.question_type === "numeric" ? "numeric" : "multiple_choice") as "multiple_choice" | "numeric",
+                        choices: r.choices?.length ? [...r.choices, "", "", "", ""].slice(0, 4) : ["", "", "", ""],
                         correct_index: r.correct_index,
+                        numeric_answer: r.numeric_answer ?? "",
+                        answer_tolerance: r.answer_tolerance ?? 0.01,
                         explanation: r.explanation ?? "",
                         sort_order: r.sort_order,
                       })}
@@ -363,6 +412,20 @@ function AdminPage() {
                   />
                 </label>
               </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setEdit({ ...edit, question_type: "multiple_choice" })}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium ${edit.question_type === "multiple_choice" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+                >
+                  Multiple Choice
+                </button>
+                <button
+                  onClick={() => setEdit({ ...edit, question_type: "numeric" })}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium ${edit.question_type === "numeric" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+                >
+                  Numeric Input
+                </button>
+              </div>
               <label className="flex flex-col gap-1 text-sm">
                 Prompt
                 <textarea
@@ -372,28 +435,53 @@ function AdminPage() {
                   className="rounded-md border border-border bg-background px-2 py-1.5"
                 />
               </label>
-              {edit.choices.map((c, i) => (
-                <label key={i} className="flex items-center gap-2 text-sm">
-                  <input
-                    type="radio"
-                    checked={edit.correct_index === i}
-                    onChange={() => setEdit({ ...edit, correct_index: i })}
-                  />
-                  <span className="w-6 font-semibold">{String.fromCharCode(65 + i)})</span>
-                  <input
-                    type="text"
-                    value={c}
-                    onChange={(e) => {
-                      const next = [...edit.choices];
-                      next[i] = e.target.value;
-                      setEdit({ ...edit, choices: next });
-                    }}
-                    className="flex-1 rounded-md border border-border bg-background px-2 py-1.5"
-                  />
-                </label>
-              ))}
+              {edit.question_type === "numeric" ? (
+                <>
+                  <label className="flex flex-col gap-1 text-sm">
+                    Correct Answer
+                    <input
+                      type="text"
+                      value={edit.numeric_answer}
+                      onChange={(e) => setEdit({ ...edit, numeric_answer: e.target.value })}
+                      placeholder="e.g. $1,456.32 or 3.5%"
+                      className="rounded-md border border-border bg-background px-2 py-1.5"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-sm">
+                    Tolerance (±)
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={edit.answer_tolerance}
+                      onChange={(e) => setEdit({ ...edit, answer_tolerance: Number(e.target.value) })}
+                      className="rounded-md border border-border bg-background px-2 py-1.5"
+                    />
+                  </label>
+                </>
+              ) : (
+                edit.choices.map((c, i) => (
+                  <label key={i} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="radio"
+                      checked={edit.correct_index === i}
+                      onChange={() => setEdit({ ...edit, correct_index: i })}
+                    />
+                    <span className="w-6 font-semibold">{String.fromCharCode(65 + i)})</span>
+                    <input
+                      type="text"
+                      value={c}
+                      onChange={(e) => {
+                        const next = [...edit.choices];
+                        next[i] = e.target.value;
+                        setEdit({ ...edit, choices: next });
+                      }}
+                      className="flex-1 rounded-md border border-border bg-background px-2 py-1.5"
+                    />
+                  </label>
+                ))
+              )}
               <label className="flex flex-col gap-1 text-sm">
-                Explanation (optional)
+                {edit.question_type === "numeric" ? "Step-by-step solution" : "Explanation (optional)"}
                 <textarea
                   value={edit.explanation}
                   onChange={(e) => setEdit({ ...edit, explanation: e.target.value })}
