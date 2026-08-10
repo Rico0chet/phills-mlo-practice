@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Home, X, GripVertical } from "lucide-react";
+import { Home, X, GripVertical, EyeOff, Calculator as CalcIcon } from "lucide-react";
 
 const POS_KEY = "mortgage-calc-pos";
 const HIDDEN_KEY = "mortgage-calc-hidden";
