@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, RotateCcw, Shuffle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Pause, Play, RotateCcw, Shuffle } from "lucide-react";
 import { getFlashcardCategory, fetchFlashcards, type Flashcard } from "@/lib/flashcards";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -54,6 +54,11 @@ function FlashcardDeck() {
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [duration, setDuration] = useState(15);
+  const [autoplay, setAutoplay] = useState(false);
+  const [remaining, setRemaining] = useState(15);
+  const stateRef = useRef({ index: 0, flipped: false, total: 0 });
+  stateRef.current = { index, flipped, total: cards.length };
 
   useEffect(() => {
     setLoading(true);
@@ -62,10 +67,32 @@ function FlashcardDeck() {
         setCards(c);
         setIndex(0);
         setFlipped(false);
+        setAutoplay(false);
       })
       .catch(() => setCards([]))
       .finally(() => setLoading(false));
   }, [category]);
+
+  useEffect(() => {
+    if (!autoplay) return;
+    setRemaining(duration);
+    const id = setInterval(() => {
+      setRemaining((r) => {
+        if (r > 1) return r - 1;
+        const { index: i, flipped: f, total } = stateRef.current;
+        if (!f) {
+          setFlipped(true);
+        } else if (i < total - 1) {
+          setFlipped(false);
+          setIndex(i + 1);
+        } else {
+          setAutoplay(false);
+        }
+        return duration;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [autoplay, duration, index, flipped]);
 
   const card = cards[index];
 
@@ -73,6 +100,7 @@ function FlashcardDeck() {
     setFlipped(false);
     setIndex((i) => Math.min(Math.max(i + delta, 0), Math.max(cards.length - 1, 0)));
   };
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -129,6 +157,39 @@ function FlashcardDeck() {
                 </button>
               </div>
             </div>
+
+            <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm">
+              <span className="font-medium text-card-foreground">Auto-play</span>
+              <div className="flex gap-1">
+                {[10, 15, 20].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDuration(d)}
+                    className={
+                      "rounded-md border px-2.5 py-1 font-medium " +
+                      (duration === d
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border text-foreground hover:bg-accent")
+                    }
+                  >
+                    {d}s
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setAutoplay((a) => !a)}
+                className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 font-medium text-foreground hover:bg-accent"
+              >
+                {autoplay ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                {autoplay ? "Stop" : "Start"}
+              </button>
+              {autoplay && (
+                <span className="text-muted-foreground">
+                  {flipped ? "Next card" : "Flip"} in {remaining}s
+                </span>
+              )}
+            </div>
+
 
             <button
               onClick={() => setFlipped((f) => !f)}
