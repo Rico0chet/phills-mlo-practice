@@ -133,28 +133,54 @@ export function MortgageCalculator() {
     "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary";
   const labelClass = "mb-1 block text-xs font-medium text-muted-foreground";
 
+  if (hidden) {
+    return (
+      <button
+        onClick={() => setHiddenPersist(false)}
+        className="fixed bottom-6 left-6 z-40 flex items-center gap-2 rounded-full border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground shadow-lg hover:text-foreground"
+        aria-label="Show mortgage calculator"
+      >
+        <CalcIcon className="h-4 w-4" />
+        Show calculator
+      </button>
+    );
+  }
+
   return (
     <>
-      <button
-        ref={btnRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onClick={() => {
-          if (movedRef.current) {
-            movedRef.current = false;
-            return;
-          }
-          setOpen((o) => !o);
-        }}
+      <div
         style={pos ? { left: pos.x, top: pos.y, bottom: "auto" } : undefined}
-        className="fixed bottom-6 left-6 z-40 flex touch-none select-none items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-colors hover:bg-primary/90"
-        aria-label="Toggle mortgage calculator (drag to move)"
+        className="fixed bottom-6 left-6 z-40 flex items-center gap-1"
       >
-        <GripVertical className="h-4 w-4 opacity-70" />
-        {open ? <X className="h-4 w-4" /> : <Home className="h-4 w-4" />}
-        Mortgage Calculator
-      </button>
+        <button
+          ref={btnRef}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onClick={() => {
+            if (movedRef.current) {
+              movedRef.current = false;
+              return;
+            }
+            setOpen((o) => !o);
+          }}
+          className="flex touch-none select-none items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-colors hover:bg-primary/90"
+          aria-label="Toggle mortgage calculator (drag to move)"
+        >
+          <GripVertical className="h-4 w-4 opacity-70" />
+          {open ? <X className="h-4 w-4" /> : <Home className="h-4 w-4" />}
+          Mortgage Calculator
+        </button>
+        <button
+          onClick={() => setHiddenPersist(true)}
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-lg hover:text-foreground"
+          aria-label="Hide mortgage calculator"
+          title="Hide"
+        >
+          <EyeOff className="h-4 w-4" />
+        </button>
+      </div>
+
 
       {open && (
         <div
