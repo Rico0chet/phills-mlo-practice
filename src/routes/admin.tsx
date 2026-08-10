@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   chapters,
+  fetchChapterConfig,
   isCurrentUserAdmin,
   type DbQuestion,
 } from "@/lib/questions";
@@ -10,6 +11,7 @@ import { ArrowLeft, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { AdminMediaEditor } from "@/components/AdminMediaEditor";
 import { AdminResourcesEditor } from "@/components/AdminResourcesEditor";
 import { AdminPageTitlesEditor } from "@/components/AdminPageTitlesEditor";
+import { AdminChaptersEditor } from "@/components/AdminChaptersEditor";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -47,7 +49,7 @@ const empty = (chapter: number, page: number, sort_order = 0): EditState => ({
 
 function AdminPage() {
   const [authorized, setAuthorized] = useState<null | boolean>(null);
-  const [tab, setTab] = useState<"questions" | "media" | "resources" | "titles">("questions");
+  const [tab, setTab] = useState<"questions" | "media" | "resources" | "titles" | "chapters">("questions");
   const [chapter, setChapter] = useState(1);
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<DbQuestion[]>([]);
@@ -60,6 +62,7 @@ function AdminPage() {
 
   useEffect(() => {
     isCurrentUserAdmin().then((ok) => setAuthorized(ok));
+    void fetchChapterConfig().catch(() => {});
   }, []);
 
   const chapterInfo = chapters.find((c) => c.number === chapter)!;
@@ -224,6 +227,12 @@ function AdminPage() {
             >
               Page Titles
             </button>
+            <button
+              onClick={() => setTab("chapters")}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "chapters" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+            >
+              Chapters & Pages
+            </button>
           </div>
         </div>
       </header>
@@ -235,6 +244,8 @@ function AdminPage() {
           <AdminResourcesEditor />
         ) : tab === "titles" ? (
           <AdminPageTitlesEditor />
+        ) : tab === "chapters" ? (
+          <AdminChaptersEditor />
         ) : (
         <>
 
