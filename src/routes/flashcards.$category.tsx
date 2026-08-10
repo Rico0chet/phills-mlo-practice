@@ -54,6 +54,11 @@ function FlashcardDeck() {
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [duration, setDuration] = useState(15);
+  const [autoplay, setAutoplay] = useState(false);
+  const [remaining, setRemaining] = useState(15);
+  const stateRef = useRef({ index: 0, flipped: false, total: 0 });
+  stateRef.current = { index, flipped, total: cards.length };
 
   useEffect(() => {
     setLoading(true);
@@ -62,10 +67,32 @@ function FlashcardDeck() {
         setCards(c);
         setIndex(0);
         setFlipped(false);
+        setAutoplay(false);
       })
       .catch(() => setCards([]))
       .finally(() => setLoading(false));
   }, [category]);
+
+  useEffect(() => {
+    if (!autoplay) return;
+    setRemaining(duration);
+    const id = setInterval(() => {
+      setRemaining((r) => {
+        if (r > 1) return r - 1;
+        const { index: i, flipped: f, total } = stateRef.current;
+        if (!f) {
+          setFlipped(true);
+        } else if (i < total - 1) {
+          setFlipped(false);
+          setIndex(i + 1);
+        } else {
+          setAutoplay(false);
+        }
+        return duration;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [autoplay, duration, index, flipped]);
 
   const card = cards[index];
 
@@ -73,6 +100,7 @@ function FlashcardDeck() {
     setFlipped(false);
     setIndex((i) => Math.min(Math.max(i + delta, 0), Math.max(cards.length - 1, 0)));
   };
+
 
   return (
     <div className="min-h-screen bg-background">
