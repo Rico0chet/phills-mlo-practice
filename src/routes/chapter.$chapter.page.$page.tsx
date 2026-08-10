@@ -53,7 +53,7 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
 
 function ChapterPage() {
   const { chapter: chapterParam, page } = Route.useParams();
-  const { chapter, pageSubtitle } = Route.useLoaderData() as {
+  const { chapter, pageSubtitle: loaderSubtitle } = Route.useLoaderData() as {
     chapter: { number: number; title: string; pages: number };
     pageSubtitle: string | null;
   };
@@ -159,9 +159,9 @@ function ChapterPage() {
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             {chapter.title}
           </h1>
-          {pageSubtitle && (
+          {(dbSubtitle ?? loaderSubtitle) && (
             <p className="mt-1 text-lg font-medium text-muted-foreground">
-              {pageSubtitle}
+              {dbSubtitle ?? loaderSubtitle}
             </p>
           )}
           {loading ? (
