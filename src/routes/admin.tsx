@@ -50,7 +50,7 @@ const empty = (chapter: number, page: number, sort_order = 0): EditState => ({
 
 function AdminPage() {
   const [authorized, setAuthorized] = useState<null | boolean>(null);
-  const [tab, setTab] = useState<"questions" | "media" | "resources" | "titles" | "chapters">("questions");
+  const [tab, setTab] = useState<"questions" | "media" | "resources" | "titles" | "chapters" | "flashcards">("questions");
   const [chapter, setChapter] = useState(1);
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<DbQuestion[]>([]);
