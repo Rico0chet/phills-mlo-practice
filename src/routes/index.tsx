@@ -58,14 +58,6 @@ function Index() {
             >
               View your stats →
             </Link>
-            {isAdmin && (
-              <Link
-                to="/admin"
-                className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:bg-accent"
-              >
-                Admin panel
-              </Link>
-            )}
           </div>
 
         </div>
