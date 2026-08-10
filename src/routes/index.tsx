@@ -4,6 +4,7 @@ import { chapters, fetchChapterConfig } from "@/lib/questions";
 import { fetchPageTitles, getPageLabel } from "@/lib/page-titles";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccountMenu } from "@/components/AccountMenu";
+import { MortgageCalculator } from "@/components/MortgageCalculator";
 
 
 export const Route = createFileRoute("/")({
@@ -92,6 +93,8 @@ function Index() {
           ))}
         </div>
       </main>
+      <MortgageCalculator />
     </div>
+
   );
 }
