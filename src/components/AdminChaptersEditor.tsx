@@ -7,6 +7,7 @@ export function AdminChaptersEditor() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<number | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState<number | null>(null);
 
   useEffect(() => {
     let cancel = false;
@@ -22,8 +23,22 @@ export function AdminChaptersEditor() {
     };
   }, []);
 
+  function currentPages(chapterNumber: number) {
+    return chapters.find((c) => c.number === chapterNumber)?.pages ?? 1;
+  }
+
+  function requestSave(chapterNumber: number) {
+    const next = counts[chapterNumber] ?? 1;
+    if (next < currentPages(chapterNumber)) {
+      setConfirming(chapterNumber);
+      return;
+    }
+    void save(chapterNumber);
+  }
+
   async function save(chapterNumber: number) {
     setBusy(chapterNumber);
+    setConfirming(null);
     setMsg(null);
     try {
       await saveChapterPageCount(chapterNumber, counts[chapterNumber] ?? 1);
