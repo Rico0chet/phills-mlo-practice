@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Home, X, GripVertical } from "lucide-react";
 
 const POS_KEY = "mortgage-calc-pos";
+const HIDDEN_KEY = "mortgage-calc-hidden";
 
 const CREDIT_BANDS = ["Excellent (740+)", "Good (700-739)", "Fair (660-699)", "Poor (below 660)"];
 
