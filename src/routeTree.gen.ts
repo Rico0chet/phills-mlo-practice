@@ -13,6 +13,8 @@ import { Route as StatsRouteImport } from './routes/stats'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FlashcardsIndexRouteImport } from './routes/flashcards.index'
+import { Route as FlashcardsCategoryRouteImport } from './routes/flashcards.$category'
 import { Route as ChapterChapterPagePageRouteImport } from './routes/chapter.$chapter.page.$page'
 
 const StatsRoute = StatsRouteImport.update({
@@ -35,6 +37,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FlashcardsIndexRoute = FlashcardsIndexRouteImport.update({
+  id: '/flashcards/',
+  path: '/flashcards/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlashcardsCategoryRoute = FlashcardsCategoryRouteImport.update({
+  id: '/flashcards/$category',
+  path: '/flashcards/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChapterChapterPagePageRoute = ChapterChapterPagePageRouteImport.update({
   id: '/chapter/$chapter/page/$page',
   path: '/chapter/$chapter/page/$page',
@@ -46,6 +58,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/stats': typeof StatsRoute
+  '/flashcards/$category': typeof FlashcardsCategoryRoute
+  '/flashcards/': typeof FlashcardsIndexRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +67,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/stats': typeof StatsRoute
+  '/flashcards/$category': typeof FlashcardsCategoryRoute
+  '/flashcards': typeof FlashcardsIndexRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRoutesById {
@@ -61,6 +77,8 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/stats': typeof StatsRoute
+  '/flashcards/$category': typeof FlashcardsCategoryRoute
+  '/flashcards/': typeof FlashcardsIndexRoute
   '/chapter/$chapter/page/$page': typeof ChapterChapterPagePageRoute
 }
 export interface FileRouteTypes {
@@ -70,15 +88,26 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/stats'
+    | '/flashcards/$category'
+    | '/flashcards/'
     | '/chapter/$chapter/page/$page'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/auth' | '/stats' | '/chapter/$chapter/page/$page'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/stats'
+    | '/flashcards/$category'
+    | '/flashcards'
+    | '/chapter/$chapter/page/$page'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/auth'
     | '/stats'
+    | '/flashcards/$category'
+    | '/flashcards/'
     | '/chapter/$chapter/page/$page'
   fileRoutesById: FileRoutesById
 }
@@ -87,6 +116,8 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   StatsRoute: typeof StatsRoute
+  FlashcardsCategoryRoute: typeof FlashcardsCategoryRoute
+  FlashcardsIndexRoute: typeof FlashcardsIndexRoute
   ChapterChapterPagePageRoute: typeof ChapterChapterPagePageRoute
 }
 
@@ -120,6 +151,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/flashcards/': {
+      id: '/flashcards/'
+      path: '/flashcards'
+      fullPath: '/flashcards/'
+      preLoaderRoute: typeof FlashcardsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flashcards/$category': {
+      id: '/flashcards/$category'
+      path: '/flashcards/$category'
+      fullPath: '/flashcards/$category'
+      preLoaderRoute: typeof FlashcardsCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chapter/$chapter/page/$page': {
       id: '/chapter/$chapter/page/$page'
       path: '/chapter/$chapter/page/$page'
@@ -135,6 +180,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   StatsRoute: StatsRoute,
+  FlashcardsCategoryRoute: FlashcardsCategoryRoute,
+  FlashcardsIndexRoute: FlashcardsIndexRoute,
   ChapterChapterPagePageRoute: ChapterChapterPagePageRoute,
 }
 export const routeTree = rootRouteImport

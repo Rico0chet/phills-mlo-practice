@@ -137,6 +137,36 @@ export type Database = {
         }
         Relationships: []
       }
+      flashcards: {
+        Row: {
+          back: string
+          category: string
+          created_at: string
+          front: string
+          id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          back: string
+          category: string
+          created_at?: string
+          front: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          back?: string
+          category?: string
+          created_at?: string
+          front?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_titles: {
         Row: {
           chapter: number
