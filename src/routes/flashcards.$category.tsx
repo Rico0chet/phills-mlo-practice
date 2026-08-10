@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, RotateCcw, Shuffle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, Pause, Play, RotateCcw, Shuffle } from "lucide-react";
 import { getFlashcardCategory, fetchFlashcards, type Flashcard } from "@/lib/flashcards";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
