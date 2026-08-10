@@ -15,6 +15,7 @@ import { ChapterAudioPlayer } from "@/components/ChapterAudioPlayer";
 import { ChapterResources } from "@/components/ChapterResources";
 import { FormulaReference } from "@/components/FormulaReference";
 import { Calculator } from "@/components/Calculator";
+import { MortgageCalculator } from "@/components/MortgageCalculator";
 import { recordAttempt } from "@/lib/stats";
 import { fetchPageTitles, getPageSubtitle } from "@/lib/page-titles";
 import { ArrowLeft } from "lucide-react";
@@ -191,6 +192,8 @@ function ChapterPage() {
             <Calculator />
           </>
         )}
+        <MortgageCalculator />
+
 
         {questions ? (
           <>
