@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { chapters } from "@/lib/questions";
+import { chapters, isCurrentUserAdmin } from "@/lib/questions";
 import { fetchPageTitles, getPageLabel } from "@/lib/page-titles";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -12,16 +12,21 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [, setTitlesVersion] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     let cancel = false;
     fetchPageTitles()
       .then(() => !cancel && setTitlesVersion((v) => v + 1))
       .catch(() => {});
+    isCurrentUserAdmin()
+      .then((ok) => !cancel && setIsAdmin(ok))
+      .catch(() => {});
     return () => {
       cancel = true;
     };
   }, []);
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -46,12 +51,23 @@ function Index() {
             Prepare for your Mortgage Loan Originator licensing exam with chapter-by-chapter
             practice questions. Select a chapter and page below to begin.
           </p>
-          <Link
-            to="/stats"
-            className="mt-5 inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:bg-accent"
-          >
-            View your stats →
-          </Link>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link
+              to="/stats"
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:bg-accent"
+            >
+              View your stats →
+            </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:bg-accent"
+              >
+                Admin panel
+              </Link>
+            )}
+          </div>
+
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-6 py-10">
