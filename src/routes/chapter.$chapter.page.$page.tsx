@@ -192,6 +192,8 @@ function ChapterPage() {
             <Calculator />
           </>
         )}
+        <MortgageCalculator />
+
 
         {questions ? (
           <>
