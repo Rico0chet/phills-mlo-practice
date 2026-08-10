@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { chapters, isCurrentUserAdmin } from "@/lib/questions";
+import { chapters, fetchChapterConfig, isCurrentUserAdmin } from "@/lib/questions";
 import { fetchPageTitles, getPageLabel } from "@/lib/page-titles";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccountMenu } from "@/components/AccountMenu";
@@ -16,7 +16,7 @@ function Index() {
 
   useEffect(() => {
     let cancel = false;
-    fetchPageTitles()
+    Promise.all([fetchChapterConfig(), fetchPageTitles()])
       .then(() => !cancel && setTitlesVersion((v) => v + 1))
       .catch(() => {});
     isCurrentUserAdmin()

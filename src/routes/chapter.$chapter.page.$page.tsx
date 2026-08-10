@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   fetchQuestions,
+  fetchChapterConfig,
   getChapter,
   buildAttempt,
   isNumericCorrect,
@@ -28,7 +29,8 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
       },
     ],
   }),
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
+    await fetchChapterConfig().catch(() => {});
     const chapter = getChapter(params.chapter);
     if (!chapter) throw notFound();
     const pageNum = Number(params.page);
