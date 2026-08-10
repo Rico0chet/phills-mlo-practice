@@ -17,6 +17,7 @@ function currency(n: number): string {
 
 export function MortgageCalculator() {
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const draggingRef = useRef(false);
   const movedRef = useRef(false);
@@ -30,10 +31,22 @@ export function MortgageCalculator() {
         const p = JSON.parse(raw);
         if (typeof p?.x === "number" && typeof p?.y === "number") setPos(p);
       }
+      setHidden(localStorage.getItem(HIDDEN_KEY) === "1");
     } catch {
       /* ignore */
     }
   }, []);
+
+  function setHiddenPersist(v: boolean) {
+    setHidden(v);
+    if (v) setOpen(false);
+    try {
+      localStorage.setItem(HIDDEN_KEY, v ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }
+
 
   const clamp = useCallback((x: number, y: number) => {
     const el = btnRef.current;
