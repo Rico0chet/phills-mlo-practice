@@ -137,6 +137,33 @@ export type Database = {
         }
         Relationships: []
       }
+      page_titles: {
+        Row: {
+          chapter: number
+          created_at: string
+          id: string
+          page: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          chapter: number
+          created_at?: string
+          id?: string
+          page: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          chapter?: number
+          created_at?: string
+          id?: string
+          page?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       questions: {
         Row: {
           answer_tolerance: number | null
