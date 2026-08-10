@@ -158,6 +158,39 @@ function FlashcardDeck() {
               </div>
             </div>
 
+            <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm">
+              <span className="font-medium text-card-foreground">Auto-play</span>
+              <div className="flex gap-1">
+                {[10, 15, 20].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => setDuration(d)}
+                    className={
+                      "rounded-md border px-2.5 py-1 font-medium " +
+                      (duration === d
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border text-foreground hover:bg-accent")
+                    }
+                  >
+                    {d}s
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setAutoplay((a) => !a)}
+                className="inline-flex items-center gap-1 rounded-md border border-border px-3 py-1.5 font-medium text-foreground hover:bg-accent"
+              >
+                {autoplay ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                {autoplay ? "Stop" : "Start"}
+              </button>
+              {autoplay && (
+                <span className="text-muted-foreground">
+                  {flipped ? "Next card" : "Flip"} in {remaining}s
+                </span>
+              )}
+            </div>
+
+
             <button
               onClick={() => setFlipped((f) => !f)}
               className="flex min-h-64 w-full flex-col items-center justify-center rounded-xl border border-border bg-card p-8 text-center shadow-sm transition-colors hover:border-primary"
