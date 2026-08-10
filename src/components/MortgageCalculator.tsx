@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Home, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Home, X, GripVertical } from "lucide-react";
+
+const POS_KEY = "mortgage-calc-pos";
 
 const CREDIT_BANDS = ["Excellent (740+)", "Good (700-739)", "Fair (660-699)", "Poor (below 660)"];
 
@@ -14,6 +16,61 @@ function currency(n: number): string {
 
 export function MortgageCalculator() {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const draggingRef = useRef(false);
+  const movedRef = useRef(false);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(POS_KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.x === "number" && typeof p?.y === "number") setPos(p);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const clamp = useCallback((x: number, y: number) => {
+    const el = btnRef.current;
+    const w = el?.offsetWidth ?? 200;
+    const h = el?.offsetHeight ?? 44;
+    return {
+      x: Math.min(Math.max(8, x), Math.max(8, window.innerWidth - w - 8)),
+      y: Math.min(Math.max(8, y), Math.max(8, window.innerHeight - h - 8)),
+    };
+  }, []);
+
+  function onPointerDown(e: React.PointerEvent) {
+    const rect = btnRef.current!.getBoundingClientRect();
+    offsetRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    draggingRef.current = true;
+    movedRef.current = false;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  }
+
+  function onPointerMove(e: React.PointerEvent) {
+    if (!draggingRef.current) return;
+    movedRef.current = true;
+    setPos(clamp(e.clientX - offsetRef.current.x, e.clientY - offsetRef.current.y));
+  }
+
+  function onPointerUp(e: React.PointerEvent) {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+    if (movedRef.current && pos) {
+      try {
+        localStorage.setItem(POS_KEY, JSON.stringify(pos));
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
   const [homePrice, setHomePrice] = useState("300000");
   const [down, setDown] = useState("60000");
   const [downPct, setDownPct] = useState("20");
@@ -65,16 +122,39 @@ export function MortgageCalculator() {
   return (
     <>
       <button
-        onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-6 left-6 z-40 flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-colors hover:bg-primary/90"
-        aria-label="Toggle mortgage calculator"
+        ref={btnRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onClick={() => {
+          if (movedRef.current) {
+            movedRef.current = false;
+            return;
+          }
+          setOpen((o) => !o);
+        }}
+        style={pos ? { left: pos.x, top: pos.y, bottom: "auto" } : undefined}
+        className="fixed bottom-6 left-6 z-40 flex touch-none select-none items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-lg transition-colors hover:bg-primary/90"
+        aria-label="Toggle mortgage calculator (drag to move)"
       >
+        <GripVertical className="h-4 w-4 opacity-70" />
         {open ? <X className="h-4 w-4" /> : <Home className="h-4 w-4" />}
         Mortgage Calculator
       </button>
 
       {open && (
-        <div className="fixed bottom-24 left-6 z-40 max-h-[75vh] w-[22rem] max-w-[calc(100vw-3rem)] overflow-y-auto rounded-xl border border-border bg-card p-4 shadow-xl">
+        <div
+          style={
+            pos
+              ? {
+                  left: Math.min(pos.x, Math.max(8, window.innerWidth - 360)),
+                  top: pos.y > window.innerHeight / 2 ? "auto" : pos.y + 60,
+                  bottom: pos.y > window.innerHeight / 2 ? window.innerHeight - pos.y + 12 : "auto",
+                }
+              : undefined
+          }
+          className="fixed bottom-24 left-6 z-40 max-h-[75vh] w-[22rem] max-w-[calc(100vw-3rem)] overflow-y-auto rounded-xl border border-border bg-card p-4 shadow-xl"
+        >
           <h3 className="mb-3 text-sm font-semibold text-card-foreground">Mortgage Calculator</h3>
 
           <div className="space-y-3">
