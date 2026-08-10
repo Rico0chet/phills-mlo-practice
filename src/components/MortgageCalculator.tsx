@@ -16,6 +16,61 @@ function currency(n: number): string {
 
 export function MortgageCalculator() {
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const draggingRef = useRef(false);
+  const movedRef = useRef(false);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(POS_KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.x === "number" && typeof p?.y === "number") setPos(p);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const clamp = useCallback((x: number, y: number) => {
+    const el = btnRef.current;
+    const w = el?.offsetWidth ?? 200;
+    const h = el?.offsetHeight ?? 44;
+    return {
+      x: Math.min(Math.max(8, x), Math.max(8, window.innerWidth - w - 8)),
+      y: Math.min(Math.max(8, y), Math.max(8, window.innerHeight - h - 8)),
+    };
+  }, []);
+
+  function onPointerDown(e: React.PointerEvent) {
+    const rect = btnRef.current!.getBoundingClientRect();
+    offsetRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    draggingRef.current = true;
+    movedRef.current = false;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  }
+
+  function onPointerMove(e: React.PointerEvent) {
+    if (!draggingRef.current) return;
+    movedRef.current = true;
+    setPos(clamp(e.clientX - offsetRef.current.x, e.clientY - offsetRef.current.y));
+  }
+
+  function onPointerUp(e: React.PointerEvent) {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+    if (movedRef.current && pos) {
+      try {
+        localStorage.setItem(POS_KEY, JSON.stringify(pos));
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
   const [homePrice, setHomePrice] = useState("300000");
   const [down, setDown] = useState("60000");
   const [downPct, setDownPct] = useState("20");
