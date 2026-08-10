@@ -105,12 +105,46 @@ export function AdminChaptersEditor() {
               </button>
             </div>
             <button
-              onClick={() => save(c.number)}
+              onClick={() => requestSave(c.number)}
               disabled={busy === c.number}
               className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
             >
               <Save className="h-4 w-4" /> {busy === c.number ? "Saving…" : "Save"}
             </button>
+
+            {confirming === c.number && (
+              <div className="w-full rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm">
+                <p className="font-medium text-foreground">
+                  Reduce chapter {c.number} from {currentPages(c.number)} to {counts[c.number]} page
+                  {(counts[c.number] ?? 1) === 1 ? "" : "s"}?
+                </p>
+                <p className="mt-1 text-muted-foreground">
+                  Page{currentPages(c.number) - (counts[c.number] ?? 1) === 1 ? "" : "s"}{" "}
+                  {(counts[c.number] ?? 1) + 1}
+                  {currentPages(c.number) - (counts[c.number] ?? 1) === 1
+                    ? ""
+                    : `–${currentPages(c.number)}`}{" "}
+                  will no longer be available to students. Are you sure?
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => save(c.number)}
+                    className="rounded-md bg-destructive px-3 py-1.5 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Yes, remove
+                  </button>
+                  <button
+                    onClick={() => {
+                      setConfirming(null);
+                      setCounts((prev) => ({ ...prev, [c.number]: currentPages(c.number) }));
+                    }}
+                    className="rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-accent"
+                  >
+                    No, cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
