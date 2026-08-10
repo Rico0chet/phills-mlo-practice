@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { chapters } from "@/lib/questions";
-import { getPageLabel } from "@/lib/page-titles";
+import { fetchPageTitles, getPageLabel } from "@/lib/page-titles";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccountMenu } from "@/components/AccountMenu";
 
@@ -10,6 +11,18 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [, setTitlesVersion] = useState(0);
+
+  useEffect(() => {
+    let cancel = false;
+    fetchPageTitles()
+      .then(() => !cancel && setTitlesVersion((v) => v + 1))
+      .catch(() => {});
+    return () => {
+      cancel = true;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">

@@ -9,6 +9,7 @@ import {
 import { ArrowLeft, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { AdminMediaEditor } from "@/components/AdminMediaEditor";
 import { AdminResourcesEditor } from "@/components/AdminResourcesEditor";
+import { AdminPageTitlesEditor } from "@/components/AdminPageTitlesEditor";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -46,7 +47,7 @@ const empty = (chapter: number, page: number, sort_order = 0): EditState => ({
 
 function AdminPage() {
   const [authorized, setAuthorized] = useState<null | boolean>(null);
-  const [tab, setTab] = useState<"questions" | "media" | "resources">("questions");
+  const [tab, setTab] = useState<"questions" | "media" | "resources" | "titles">("questions");
   const [chapter, setChapter] = useState(1);
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<DbQuestion[]>([]);
@@ -217,6 +218,12 @@ function AdminPage() {
             >
               Resources
             </button>
+            <button
+              onClick={() => setTab("titles")}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "titles" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+            >
+              Page Titles
+            </button>
           </div>
         </div>
       </header>
@@ -226,6 +233,8 @@ function AdminPage() {
           <AdminMediaEditor />
         ) : tab === "resources" ? (
           <AdminResourcesEditor />
+        ) : tab === "titles" ? (
+          <AdminPageTitlesEditor />
         ) : (
         <>
 

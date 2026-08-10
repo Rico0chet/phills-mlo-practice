@@ -15,7 +15,7 @@ import { ChapterResources } from "@/components/ChapterResources";
 import { FormulaReference } from "@/components/FormulaReference";
 import { Calculator } from "@/components/Calculator";
 import { recordAttempt } from "@/lib/stats";
-import { getPageSubtitle } from "@/lib/page-titles";
+import { fetchPageTitles, getPageSubtitle } from "@/lib/page-titles";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/chapter/$chapter/page/$page")({
@@ -53,10 +53,11 @@ export const Route = createFileRoute("/chapter/$chapter/page/$page")({
 
 function ChapterPage() {
   const { chapter: chapterParam, page } = Route.useParams();
-  const { chapter, pageSubtitle } = Route.useLoaderData() as {
+  const { chapter, pageSubtitle: loaderSubtitle } = Route.useLoaderData() as {
     chapter: { number: number; title: string; pages: number };
     pageSubtitle: string | null;
   };
+  const [dbSubtitle, setDbSubtitle] = useState<string | null>(null);
   const [pool, setPool] = useState<Question[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [attemptSeed, setAttemptSeed] = useState(0);
@@ -65,6 +66,16 @@ function ChapterPage() {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [finalMs, setFinalMs] = useState<number | null>(null);
+
+  useEffect(() => {
+    let cancel = false;
+    fetchPageTitles()
+      .then(() => !cancel && setDbSubtitle(getPageSubtitle(Number(chapterParam), Number(page))))
+      .catch(() => {});
+    return () => {
+      cancel = true;
+    };
+  }, [chapterParam, page]);
 
   useEffect(() => {
     let cancel = false;
@@ -148,9 +159,9 @@ function ChapterPage() {
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             {chapter.title}
           </h1>
-          {pageSubtitle && (
+          {(dbSubtitle ?? loaderSubtitle) && (
             <p className="mt-1 text-lg font-medium text-muted-foreground">
-              {pageSubtitle}
+              {dbSubtitle ?? loaderSubtitle}
             </p>
           )}
           {loading ? (
