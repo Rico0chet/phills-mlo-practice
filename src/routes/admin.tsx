@@ -9,6 +9,7 @@ import {
 import { ArrowLeft, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { AdminMediaEditor } from "@/components/AdminMediaEditor";
 import { AdminResourcesEditor } from "@/components/AdminResourcesEditor";
+import { AdminPageTitlesEditor } from "@/components/AdminPageTitlesEditor";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
