@@ -93,6 +93,8 @@ function Index() {
           ))}
         </div>
       </main>
+      <MortgageCalculator />
     </div>
+
   );
 }
