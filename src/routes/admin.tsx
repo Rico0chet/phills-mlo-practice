@@ -12,6 +12,7 @@ import { AdminMediaEditor } from "@/components/AdminMediaEditor";
 import { AdminResourcesEditor } from "@/components/AdminResourcesEditor";
 import { AdminPageTitlesEditor } from "@/components/AdminPageTitlesEditor";
 import { AdminChaptersEditor } from "@/components/AdminChaptersEditor";
+import { AdminFlashcardsEditor } from "@/components/AdminFlashcardsEditor";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
