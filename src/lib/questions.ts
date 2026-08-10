@@ -92,6 +92,40 @@ export function getChapter(chapter: string | number): ChapterInfo | undefined {
   return chapters.find((c) => c.number === n);
 }
 
+/** Load page counts (and titles) from the database, overriding the static defaults. */
+export async function fetchChapterConfig(): Promise<ChapterInfo[]> {
+  const { data, error } = await supabase
+    .from("chapters")
+    .select("id, title, page_count")
+    .order("id", { ascending: true });
+  if (error) throw error;
+  for (const row of data ?? []) {
+    const local = chapters.find((c) => c.number === row.id);
+    if (local) {
+      local.pages = Math.max(1, row.page_count);
+      local.title = row.title;
+    } else {
+      chapters.push({ number: row.id, title: row.title, pages: Math.max(1, row.page_count) });
+    }
+  }
+  chapters.sort((a, b) => a.number - b.number);
+  return chapters;
+}
+
+export async function saveChapterPageCount(chapterNumber: number, pageCount: number) {
+  const chapter = chapters.find((c) => c.number === chapterNumber);
+  const pages = Math.max(1, Math.floor(pageCount));
+  const { error } = await supabase
+    .from("chapters")
+    .upsert(
+      { id: chapterNumber, title: chapter?.title ?? `Chapter ${chapterNumber}`, page_count: pages },
+      { onConflict: "id" },
+    );
+  if (error) throw error;
+  if (chapter) chapter.pages = pages;
+}
+
+
 export const QUESTIONS_PER_ATTEMPT = 20;
 
 function shuffle<T>(arr: T[]): T[] {
