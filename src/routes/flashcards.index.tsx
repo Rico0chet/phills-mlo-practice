@@ -41,7 +41,7 @@ function FlashcardsIndex() {
             <div>
               <Link
                 to="/"
-                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:bg-accent"
               >
                 <ArrowLeft className="h-4 w-4" /> Back to chapters
               </Link>
