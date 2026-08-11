@@ -66,7 +66,7 @@ function StatsPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
         <div className="mx-auto max-w-4xl px-6 py-8">
-          <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <Link to="/" className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:bg-accent">
             <ArrowLeft className="h-4 w-4" /> All chapters
           </Link>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">Your Stats</h1>
