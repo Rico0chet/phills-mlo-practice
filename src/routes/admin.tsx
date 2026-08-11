@@ -240,6 +240,12 @@ function AdminPage() {
             >
               Flashcards
             </button>
+            <button
+              onClick={() => setTab("users")}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "users" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+            >
+              Users
+            </button>
           </div>
         </div>
       </header>
