@@ -13,6 +13,7 @@ import { AdminResourcesEditor } from "@/components/AdminResourcesEditor";
 import { AdminPageTitlesEditor } from "@/components/AdminPageTitlesEditor";
 import { AdminChaptersEditor } from "@/components/AdminChaptersEditor";
 import { AdminFlashcardsEditor } from "@/components/AdminFlashcardsEditor";
+import { AdminUsersEditor } from "@/components/AdminUsersEditor";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -50,7 +51,7 @@ const empty = (chapter: number, page: number, sort_order = 0): EditState => ({
 
 function AdminPage() {
   const [authorized, setAuthorized] = useState<null | boolean>(null);
-  const [tab, setTab] = useState<"questions" | "media" | "resources" | "titles" | "chapters" | "flashcards">("questions");
+  const [tab, setTab] = useState<"questions" | "media" | "resources" | "titles" | "chapters" | "flashcards" | "users">("questions");
   const [chapter, setChapter] = useState(1);
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<DbQuestion[]>([]);
@@ -240,6 +241,12 @@ function AdminPage() {
             >
               Flashcards
             </button>
+            <button
+              onClick={() => setTab("users")}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${tab === "users" ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}
+            >
+              Users
+            </button>
           </div>
         </div>
       </header>
@@ -255,6 +262,8 @@ function AdminPage() {
           <AdminChaptersEditor />
         ) : tab === "flashcards" ? (
           <AdminFlashcardsEditor />
+        ) : tab === "users" ? (
+          <AdminUsersEditor />
         ) : (
         <>
 
