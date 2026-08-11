@@ -261,6 +261,8 @@ function AdminPage() {
           <AdminChaptersEditor />
         ) : tab === "flashcards" ? (
           <AdminFlashcardsEditor />
+        ) : tab === "users" ? (
+          <AdminUsersEditor />
         ) : (
         <>
 
